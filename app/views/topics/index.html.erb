@@ -1,0 +1,24 @@
+<h1>健身論壇</h1>
+<%= link_to "新增文章", new_topic_path , :class => "btn btn-primary"%>
+<br/>
+<br/>
+
+<table class="table table-striped">
+
+  <tr>
+    <td>主題</td>
+    <td>編輯</td>
+    <td>刪除</td>
+  </tr>
+  <%@topics.each do |t|%>
+  <tr>
+    <td> <%=link_to t.name, topic_path(t)%> </td>
+    <td> <%=link_to "編輯", edit_topic_path(t), :class => "btn btn-info" %></td>
+    <td> <%=link_to "刪除", topic_path(t), :method => :delete, :class => "btn btn-danger" %></td>
+  </tr>
+  <%end%>
+</table>
+
+
+
+

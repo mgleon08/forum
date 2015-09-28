@@ -1,0 +1,7 @@
+<h1>新增文章</h1>
+
+<%=form_for @topic, :url => topics_path do |t|%>
+<%=render :partial => "form" , :locals => {:t=>t}%>
+<br/>
+<%= t.submit "送出", :class => "btn btn-primary"%>
+<%end%>
