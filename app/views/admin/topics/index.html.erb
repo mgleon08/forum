@@ -1,0 +1,35 @@
+<h1>管理者介面</h1>
+
+<h2>目前分類</h2>
+
+  <%@categories.each do |c|%>
+  <div class="mar">
+    <%= link_to c.name, topics_path(:category => c),:class => "btn btn-info"%>
+    <%= link_to "<-刪除", admin_category_path(c), :method => :delete,:class => "btn btn-default"%>
+    <%= link_to "編輯", edit_admin_category_path(c),:class => "btn btn-default"%>
+  <%end%>
+  </div>
+<br>
+<br>
+<%= link_to "新增類別", new_admin_category_path, :class => "btn btn-success"%>
+
+
+<h2>會員清單</h2>
+<table class="table table-striped">
+  <tr>
+    <td>名稱</td>
+    <td>信箱</td>
+    <td>權限</td>
+    <td>編輯</td>
+  </tr>
+  <%@users.each do |u|%>
+  <tr>
+    <td><%=u.user_name%></td>
+    <td><%=u.email%></td>
+    <td><%=u.role%></td>
+    <td><%=link_to "編輯", edit_admin_user_path(u), :class => "btn btn-default"%></td>
+  </tr>
+  <%end%>
+</table>
+<%=link_to "回首頁", root_path, :class => "btn btn-primary"%>
+

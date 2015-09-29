@@ -1,20 +1,29 @@
 <h1><%=link_to "健身論壇", root_path%></h1>
-<br/>
-<%= link_to "關於本站", about_topics_path , :class => "btn btn-primary"%>
-<%if current_user != nil %>
-<%= link_to "新增文章", new_topic_path , :class => "btn btn-success"%>
-<%end%>
-<br/>
+<hr>
+  <div class="row">
+    <div class="col-sm-6">
+        <%=link_to "類別選擇", "#", :class => "btn btn-primary", :disabled => true %>
+        <%=link_to "All", root_path, :class => "btn btn-info" %>
+        <%@categories.each do |c|%>
+        <%=link_to c.name, topics_path(:category => c), :class => "btn btn-info" %>
+        <%end%>
+    </div>
 
-<div>
-  <h4>選擇類別</h4></td>
-  <%=link_to "All", root_path, :class => "btn btn-info" %>
-  <%@categories.each do |c|%>
-  <%=link_to c.name, topics_path(:category => c), :class => "btn btn-info" %>
-  <%end%>
-</div>
+    <div class="col-sm-3 right hight">
+      <%= form_tag topics_path, :method => :get do %>
+      <%= text_field_tag "keyword" %>
+      <%= submit_tag "Search" %>
+      <% end %>
+    </div>
+
+    <div class="col-sm-3 right">
+      <%if current_user != nil %>
+      <%= link_to "新增文章", new_topic_path , :class => "btn btn-success"%>
+      <%end%>
+      <%= link_to "關於本站", about_topics_path , :class => "btn btn-primary"%>
+    </div>
+  </div>
 <br>
-
 <%=link_to "按回覆排序", topics_path( :order => "most_comment", :category => params[:category]), :class => "btn btn-default" %>
 
 <%=link_to "按回覆時間排序", topics_path( :order => "last_comment", :category => params[:category]), :class => "btn btn-default" %>
@@ -24,7 +33,7 @@
 <%=link_to "按文章時間排序", topics_path( :order => "default", :category => params[:category]), :class => "btn btn-default" %>
 
 <%if current_user != nil %>
-  <%=link_to "找自己的文章", topics_path(:user => current_user ), :class => "btn btn-default" %>
+  <%=link_to "找自己的話題", topics_path(:user => current_user ), :class => "btn btn-default" %>
 <%end%>
 <br/>
 <br/>
@@ -76,7 +85,7 @@
           </td>
           <td>
             <%if current_user == t.user%>
-              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-info" %>
+              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
             <%end%>
           </td>
           <td>

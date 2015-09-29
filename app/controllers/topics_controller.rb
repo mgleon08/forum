@@ -46,6 +46,10 @@ class TopicsController < ApplicationController
       @topics = @topics.where(:user_id => params[:user])
     end
 
+    if params[:keyword]
+      @topics = @topics.where( [ "name like ?", "%#{params[:keyword]}%" ] )
+    end
+
       @topics = @topics.page(params[:page]).per(10)
   end
 
@@ -76,7 +80,6 @@ class TopicsController < ApplicationController
       flash[:alert] = "編輯失敗"
       render "new"
     end
-
   end
 
   def show

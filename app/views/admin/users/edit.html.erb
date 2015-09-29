@@ -1,0 +1,15 @@
+<%=form_for @user, :url => admin_topic_path(@user) do |u| %>
+  <%= u.label :user_name, "名稱:"%>
+  <%= u.text_field :user_name, :class => "form-control"%>
+  <br>
+  <%= u.label :email, "信箱:"%>
+  <%= u.email_field :email, :class => "form-control" %>
+  <br>
+  <br>
+  <%= u.label :role, "權限:"%>
+  <%= u.text_area :role, :class => "form-control"%>
+  <br>
+  <%= u.submit "送出", :class => "btn btn-success"%>
+  <%=link_to "回管理者介面", admin_topics_path, :class => "btn btn-primary"%>
+<%end%>
+

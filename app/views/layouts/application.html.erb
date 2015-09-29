@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Forum</title>
+  <title>健身論壇</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
@@ -10,16 +10,19 @@
 <body>
 
 <div class="container">
-  <div class="row">
     <% if current_user %>
       <br/>
+      <%= link_to('回首頁', root_path) %> |
       Hi,<%= current_user.user_name %>
       <%=image_tag(Gravatar.new(current_user.email).image_url,:size => "20x20")%>
-
       <%= link_to('登出', destroy_user_session_path, :method => :delete) %> |
       <%= link_to('修改密碼', edit_registration_path(:user)) %>
       |
       <%= link_to('個人簡介', edit_registration_path(:user)) %>
+      <%if current_user.role == "admin"%>
+      |
+      <%=link_to "管理者介面", admin_topics_path%>
+      <%end%>
     <% else %>
       <%= link_to('註冊', new_registration_path(:user)) %>
       |
@@ -35,7 +38,6 @@
       <div class="alert alert-danger" role="alert"><%= flash[:alert] %></div>
     <%end%>
     <%= yield %>
-  </div>
 </div>
 </body>
 </html>
