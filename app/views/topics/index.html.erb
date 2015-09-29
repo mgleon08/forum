@@ -1,24 +1,51 @@
 <h1>健身論壇</h1>
+
+<%= link_to "關於本站", about_topics_path , :class => "btn btn-primary"%>
+<br/>
+<br/>
 <%= link_to "新增文章", new_topic_path , :class => "btn btn-primary"%>
 <br/>
 <br/>
 
-<table class="table table-striped">
+<div>
+  <h4>選擇類別</h4></td>
+  <%@categories.each do |c|%>
+  <%=link_to c.name, topics_path(:category => c), :class => "btn btn-info" %>
+  <%end%>
+</div>
+<br>
 
+
+<%=link_to "按照最多人回覆排序", topics_path( :order => "most_comment")%>
+<%=link_to "按照最後回覆時間排序", topics_path( :order => "last_comment")%>
+<%=link_to "按照文章時間排序", topics_path( :order => "default")%>
+
+<table class="table table-striped">
   <tr>
     <td>主題</td>
+    <td>類別</td>
+    <td>發帖人</td>
+    <td>回覆數</td>
+    <td>最後回覆時間</td>
     <td>編輯</td>
     <td>刪除</td>
   </tr>
   <%@topics.each do |t|%>
   <tr>
-    <td> <%=link_to t.name, topic_path(t)%> </td>
-    <td> <%=link_to "編輯", edit_topic_path(t), :class => "btn btn-info" %></td>
+    <td> <%=link_to t.name, topic_path(t)%></td>
+    <td> <%=t.category.try(:name)%> </td>
+    <td> <%=t.user.try(:user_name)%> </td>
+
+    <% t.most_comment = t.comments.count %>
+    <% t.last_comment = t.comments.last.try(:created_at) %>
+    <%t.save%>
+    <td> <%=t.most_comment%> </td>
+    <td> <%=t.last_comment%> </td>
+    <td> <%=link_to "編輯", edit_topic_path(t), :class => "btn btn-info" %>
     <td> <%=link_to "刪除", topic_path(t), :method => :delete, :class => "btn btn-danger" %></td>
   </tr>
   <%end%>
+<%= hidden_field_tag :page, params[:page] %>
+
 </table>
-
-
-
-
+<%= paginate @topics%>

@@ -5,5 +5,6 @@ class CreateCategories < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_column :topics, :category_id, :integer
+    add_index :topics, :category_id
   end
 end

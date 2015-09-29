@@ -1,4 +1,9 @@
-<%= t.label :name, "標題"%>
+<%= t.label :name, "標題:"%>
 <%= t.text_field :name, :class => "form-control"%>
-<%= t.label :article, "文章內容"%>
+<br>
+<%= t.label :category_id, "文章類別:"%>
+<%= t.collection_select :category_id, Category.all, :id, :name %>
+<br>
+<br>
+<%= t.label :article, "文章內容:"%>
 <%= t.text_area :article, :class => "form-control"%>

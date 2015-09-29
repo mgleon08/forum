@@ -5,7 +5,9 @@ class CreateTopics < ActiveRecord::Migration
       t.text :article
       t.string :state
       t.integer :view
+      t.integer :user_id
       t.timestamps null: false
     end
+    add_index :topics, :user_id
   end
 end
