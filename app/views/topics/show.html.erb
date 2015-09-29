@@ -5,10 +5,11 @@
 
 <br/>
 <br/>
-<table class="table table-bordered">
+<table class="table table-striped">
 <tr>
-  <td>留言內容</td>
+  <td>頭像</td>
   <td>發布人</td>
+  <td>留言內容</td>
   <td>發布時間</td>
   <%if current_user != nil %>
   <td>編輯</td>
@@ -19,8 +20,9 @@
 
 <%@topic.comments.each do |t|%>
   <tr>
-    <td><%=t.user_comment%></td>
+    <td><%=image_tag(Gravatar.new(t.user.email).image_url,:size => "35x35")%></td>
     <td><%=t.user.try(:user_name)%></td>
+    <td><%=t.user_comment%></td>
     <td><%=t.created_at%></td>
     <%if current_user != nil %>
       <td>
