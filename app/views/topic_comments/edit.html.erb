@@ -1,0 +1,10 @@
+<%=form_for @comment, :url => topic_comment_path(@topic,@comment) do |t|%>
+<h2><%= t.label :user_comment, "留言:"%></h2>
+<%= t.text_area :user_comment, :class => "form-control"%>
+<br/>
+<%= t.submit "送出", :class => "btn btn-success"%>
+<%=link_to "回首頁", topic_path(@topic), :class => "btn btn-primary"%>
+<%end%>
+
+
+

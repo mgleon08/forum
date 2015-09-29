@@ -1,5 +1,5 @@
 class TopicsController < ApplicationController
-  before_action :authenticate_user!, except: [:index]
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :set_topic, only: [:show, :edit, :update, :destroy]
 
   def about
@@ -8,20 +8,30 @@ class TopicsController < ApplicationController
     @users = User.all
   end
 
+
+  def profile
+
+  end
+
   def index
 
     @categories = Category.all
 
-    if params[:order] == "most_comment"
-      @topics = Topic.order("most_comment DESC")
-    elsif params[:order] == "last_comment"
-      @topics = Topic.order("last_comment DESC")
-    else
-      @topics = Topic.order("id")
-    end
+    @topics=Topic.all
 
     if params[:category]
-      @topics = Topic.where(:category_id => params[:category])
+      @topics = @topics.where(:category_id => params[:category])
+      if params[:order] == "most_comment"
+        @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
+      elsif params[:order] == "last_comment"
+        @topics = @topics.order("last_comment DESC").where(:category_id => params[:category])
+      end
+    else
+      if params[:order] == "most_comment"
+        @topics = @topics.order("most_comment DESC")
+      elsif params[:order] == "last_comment"
+        @topics = @topics.order("last_comment DESC")
+      end
     end
 
       @topics = @topics.page(params[:page]).per(10)

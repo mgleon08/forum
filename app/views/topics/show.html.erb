@@ -1,7 +1,7 @@
 <h1><%=@topic.name%></h1>
 <p><%=@topic.article%></p>
 
-<%=link_to "回首頁", topics_path, :class => "btn btn-primary"%>
+<%=link_to "回首頁", root_path, :class => "btn btn-primary"%>
 
 <br/>
 <br/>
@@ -10,6 +10,10 @@
   <td>留言內容</td>
   <td>發布人</td>
   <td>發布時間</td>
+  <%if current_user != nil %>
+  <td>編輯</td>
+  <td>刪除</td>
+  <%end%>
 </tr>
 
 
@@ -18,14 +22,28 @@
     <td><%=t.user_comment%></td>
     <td><%=t.user.try(:user_name)%></td>
     <td><%=t.created_at%></td>
+    <%if current_user != nil %>
+      <td>
+        <%if current_user == t.user%>
+          <%=link_to "編輯", edit_topic_comment_path(@topic,t), :class => "btn btn-info" %>
+        <%end%>
+      <td>
+      <%if current_user == t.user%>
+        <%=link_to "刪除", topic_comment_path(@topic,t), :method => :delete, :class => "btn btn-danger" %>
+      <%end%>
+      </td>
+    <%end%>
   </tr>
 <%end%>
 </table>
 
-
-<%=form_for @comment, :url => topic_comments_path(@topic) do |t|%>
-<h2><%= t.label :user_comment, "留言:"%></h2>
-<%= t.text_area :user_comment, :class => "form-control"%>
-<br/>
-<%= t.submit "送出", :class => "btn btn-success"%>
+<%if current_user != nil %>
+  <%=form_for @comment, :url => topic_comments_path(@topic) do |t|%>
+    <h2><%= t.label :user_comment, "留言:"%></h2>
+    <%= t.text_area :user_comment, :class => "form-control"%>
+    <br/>
+    <%= t.submit "送出", :class => "btn btn-success"%>
+  <%end%>
+<%else%>
+  <%= link_to('留言請先登入', new_session_path(:user)) %>
 <%end%>

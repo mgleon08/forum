@@ -5,17 +5,35 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+
 </head>
 <body>
+<div id="fb-root"></div>
+
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v2.4&appId=300222283470187";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
 <div class="container">
   <div class="row">
     <% if current_user %>
       Hi,<%= current_user.user_name %>
       <%= link_to('登出', destroy_user_session_path, :method => :delete) %> |
       <%= link_to('修改密碼', edit_registration_path(:user)) %>
+      |
+      <%= link_to('個人簡介', edit_registration_path(:user)) %>
+      |
+      <div class="fb-like"></div>
     <% else %>
-      <%= link_to('註冊', new_registration_path(:user)) %> |
+      <%= link_to('註冊', new_registration_path(:user)) %>
+      |
       <%= link_to('登入', new_session_path(:user)) %>
+      |
+      <div class="fb-like"></div>
     <% end %>
 
     <%if flash[:notice].present?%>

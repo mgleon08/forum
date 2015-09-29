@@ -1,15 +1,51 @@
 class TopicCommentsController < ApplicationController
+
+  before_action :topic_find
+
   def index
   end
 
   def create
-    @topic = Topic.find(params[:topic_id])
-    @comment = @topic.comments.new(params.require(:comment).permit(:user_comment))
+    @comment = @topic.comments.new(comment_params)
     @comment.user = current_user
     if @comment.save
+      flash[:notice] = "留言成功"
       redirect_to topic_path(@topic)
     else
+      flash[:alert] = "留言失敗(不能留空白)"
       render topic_path(@topic)
     end
+  end
+
+  def edit
+    @comment = @topic.comments.find(params[:id])
+  end
+
+  def update
+    @comment = @topic.comments.find(params[:id])
+    if @comment.update(comment_params)
+      flash[:notice] = "編輯成功"
+      redirect_to topic_path(@topic)
+    else
+      flash[:alert] = "編輯失敗(不能留空白)"
+      render "edit"
+    end
+  end
+
+  def destroy
+
+    @comment = @topic.comments.find(params[:id])
+    @comment.destroy
+    redirect_to topic_path(@topic)
+  end
+
+  private
+
+  def topic_find
+    @topic = Topic.find(params[:topic_id])
+  end
+
+  def comment_params
+    params.require(:comment).permit(:user_comment)
   end
 end
