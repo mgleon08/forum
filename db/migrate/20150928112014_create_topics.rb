@@ -4,7 +4,7 @@ class CreateTopics < ActiveRecord::Migration
       t.string :name
       t.text :article
       t.string :state
-      t.integer :view
+      t.integer :view, default: 0
       t.integer :user_id
       t.timestamps null: false
     end

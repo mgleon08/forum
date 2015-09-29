@@ -1,7 +1,9 @@
 <h1>編輯文章</h1>
 
-<%=form_for @topic, :url => topic_path(@topic) do |t|%>
+<%=form_for @topic, :url => topic_path(@topic,:page=>params[:page]) do |t|%>
 <%=render :partial => "form" , :locals => {:t=>t}%>
 <br/>
-<%= t.submit "送出", :class => "btn btn-primary"%>
+<%= t.submit "送出", :class => "btn btn-success"%>
+<%=link_to "回首頁", root_path, :class => "btn btn-primary"%>
 <%end%>
+

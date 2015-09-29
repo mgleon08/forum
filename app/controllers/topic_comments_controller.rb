@@ -13,7 +13,7 @@ class TopicCommentsController < ApplicationController
       redirect_to topic_path(@topic)
     else
       flash[:alert] = "留言失敗(不能留空白)"
-      render topic_path(@topic)
+      redirect_to topic_path(@topic)
     end
   end
 

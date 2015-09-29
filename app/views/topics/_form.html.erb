@@ -7,3 +7,9 @@
 <br>
 <%= t.label :article, "文章內容:"%>
 <%= t.text_area :article, :class => "form-control"%>
+
+<br>
+<%= t.label :state, "文章是否發布:"%>
+<%= t.radio_button :state,"發布",:checked => "checked"%> <%="發布"%>
+<%= t.radio_button :state,"草稿"%> <%="草稿"%>
+<br>

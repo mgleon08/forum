@@ -43,10 +43,10 @@ ActiveRecord::Schema.define(version: 20150929032057) do
     t.string   "name"
     t.text     "article"
     t.string   "state"
-    t.integer  "view"
+    t.integer  "view",         default: 0
     t.integer  "user_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
     t.integer  "category_id"
     t.integer  "most_comment"
     t.datetime "last_comment"

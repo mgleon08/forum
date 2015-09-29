@@ -1,8 +1,0 @@
-
-
-<%=form_for @profile, :url => profiles_path(@profile) do |p|%>
-<h2><%= p.label :user_profile, "留言:"%></h2>
-    <%= p.text_area :user_profile, :class => "form-control"%>
-<br/>
-    <%= p.submit "送出", :class => "btn btn-success"%>
-<%end%>

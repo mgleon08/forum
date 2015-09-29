@@ -1,7 +1,7 @@
 <h1><%=@topic.name%></h1>
 <p><%=@topic.article%></p>
 
-<%=link_to "回首頁", root_path, :class => "btn btn-primary"%>
+<%=link_to "回首頁", root_path(:page=>params[:page]), :class => "btn btn-primary"%>
 
 <br/>
 <br/>
@@ -27,6 +27,7 @@
         <%if current_user == t.user%>
           <%=link_to "編輯", edit_topic_comment_path(@topic,t), :class => "btn btn-info" %>
         <%end%>
+      </td>
       <td>
       <%if current_user == t.user%>
         <%=link_to "刪除", topic_comment_path(@topic,t), :method => :delete, :class => "btn btn-danger" %>

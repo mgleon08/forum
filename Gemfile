@@ -18,6 +18,8 @@ gem 'bootstrap-sass', '~> 3.3.5'
 gem 'kaminari'
 
 gem 'devise'
+
+gem 'gravatar-ultimate'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
