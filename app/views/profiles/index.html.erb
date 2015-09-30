@@ -1,0 +1,120 @@
+<h1>個人簡介</h1>
+<h3> <%=@user.profile%> </h3>
+<br>
+<br>
+<br>
+<%= link_to "編輯個人簡介", edit_profile_path(@user), :class => "btn btn-success"%>
+<br>
+
+<h1>發布過文章</h1>
+<table class="table table-striped">
+  <tr>
+    <td>討論話題</td>
+    <td>分類</td>
+    <td>參與討論用戶</td>
+    <td>觀看</td>
+    <td>回覆</td>
+    <td>最後回覆時間</td>
+    <td>最後回覆用戶</td>
+    <td>狀態</td>
+    <td>編輯</td>
+    <td>刪除</td>
+  </tr>
+  <%@user.topics.each do |t|%>
+  <tr>
+    <td>
+      <%=link_to t.name, topic_path(t)%>
+    </td>
+    <td> <%=t.category.try(:name)%> </td>
+        <%topic_comment_users = t.comments.map{ |c| c.user.try(:user_name)}%>
+        <%topic_comment_users.uniq!%>
+    <td>
+        <%  topic_comment_users.each do |c| %>
+        <%= c %>
+        <%end%>
+    </td>
+    <td> <%=t.view%> </td>
+        <% t.most_comment = t.comments.count %>
+        <% t.last_comment = t.comments.last.try(:created_at) %>
+        <%t.save%>
+    <td> <%=t.most_comment%> </td>
+    <td> <%=t.last_comment%> </td>
+    <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
+    <td><%=t.state%></td>
+    <td>
+      <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
+    </td>
+    <td>
+    <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+    </td>
+  </tr>
+  <%end%>
+</table>
+
+<h1>收藏文章</h1>
+<table class="table table-striped">
+  <tr>
+    <td>討論話題</td>
+    <td>分類</td>
+    <td>參與討論用戶</td>
+    <td>觀看</td>
+    <td>回覆</td>
+    <td>最後回覆時間</td>
+    <td>最後回覆用戶</td>
+    <td>狀態</td>
+    <td>編輯</td>
+    <td>刪除</td>
+  </tr>
+
+  <%@user.likes.each do |t|%>
+  <tr>
+    <td>
+      <%=link_to t.name, topic_path(t)%>
+    </td>
+    <td> <%=t.category.try(:name)%> </td>
+        <%topic_comment_users = t.comments.map{ |c| c.user.try(:user_name)}%>
+        <%topic_comment_users.uniq!%>
+    <td>
+        <%  topic_comment_users.each do |c| %>
+        <%= c %>
+        <%end%>
+    </td>
+    <td> <%=t.view%> </td>
+        <% t.most_comment = t.comments.count %>
+        <% t.last_comment = t.comments.last.try(:created_at) %>
+        <%t.save%>
+    <td> <%=t.most_comment%> </td>
+    <td> <%=t.last_comment%> </td>
+    <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
+    <td><%=t.state%></td>
+    <td>
+      <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
+    </td>
+    <td>
+    <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+    </td>
+  </tr>
+  <%end%>
+</table>
+
+
+
+
+<h1>回覆過留言</h1>
+<table class="table table-striped">
+  <tr>
+    <td>討論話題</td>
+    <td>回覆留言</td>
+    <td>編輯</td>
+    <td>刪除</td>
+  </tr>
+
+  <%@user.comments.each do |c|%>
+  <tr>
+    <td><%=link_to c.topic.try(:name), topic_path(c.topic)%></td>
+    <td><%=c.user_comment%></td>
+    <td><%=link_to "編輯", edit_topic_comment_path(:topic_id => c.topic.id,:id=>c), :class => "btn btn-info" %></td>
+    <td><%=link_to "刪除", topic_comment_path(:topic_id => "c.topic.id",:id=>c), :method => :delete, :class => "btn btn-danger" %></td>
+  </tr>
+  <%end%>
+</table>

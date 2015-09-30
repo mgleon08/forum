@@ -1,7 +1,10 @@
 <h1><%=@topic.name%></h1>
 <p><%=@topic.article%></p>
 
+
 <%=link_to "回首頁", root_path(:page=>params[:page]), :class => "btn btn-primary"%>
+
+<%=link_to "加入收藏", collect_topic_path(@topic,:page=>params[:page]), :class => "btn btn-warning"%>
 
 <br/>
 <br/>
@@ -26,12 +29,12 @@
     <td><%=t.created_at%></td>
     <%if current_user != nil %>
       <td>
-        <%if current_user == t.user%>
+        <%if current_user == t.user || current_user.role == "admin"%>
           <%=link_to "編輯", edit_topic_comment_path(@topic,t), :class => "btn btn-info" %>
         <%end%>
       </td>
       <td>
-      <%if current_user == t.user%>
+      <%if current_user == t.user || current_user.role == "admin" %>
         <%=link_to "刪除", topic_comment_path(@topic,t), :method => :delete, :class => "btn btn-danger" %>
       <%end%>
       </td>

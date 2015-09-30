@@ -27,7 +27,7 @@ class TopicCommentsController < ApplicationController
       flash[:notice] = "編輯成功"
       redirect_to topic_path(@topic)
     else
-      flash[:alert] = "編輯失敗(不能留空白)"
+      flash.now[:alert] = "編輯失敗(不能留空白)"
       render "edit"
     end
   end

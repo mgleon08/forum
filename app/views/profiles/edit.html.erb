@@ -1,0 +1,8 @@
+<br>
+<%=form_for @user, :url => profile_path(@user) do |u| %>
+  <%= u.label :profile, "內容:"%>
+  <%= u.text_area :profile, :class => "form-control"%>
+  <br>
+  <%= u.submit "送出", :class => "btn btn-success"%>
+  <%=link_to "回個人簡介", profiles_path, :class => "btn btn-primary"%>
+<%end%>

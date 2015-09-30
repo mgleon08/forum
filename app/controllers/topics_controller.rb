@@ -1,5 +1,5 @@
 class TopicsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: [:index, :show, :about]
   before_action :set_topic, only: [:show, :edit, :update, :destroy]
 
   def about
@@ -8,8 +8,34 @@ class TopicsController < ApplicationController
     @users = User.all
   end
 
+  def bulk_delete
+    ids = Array(params[:ids])
+    topics = ids.map{ |i| Topic.find_by_id(i) }.compact
 
-  def profile
+    if params[:commit] == "選取刪除"
+     topics.each{ |t| t.destroy }
+    end
+    redirect_to root_path
+  end
+
+  def collect
+    @topic = Topic.find(params[:id])
+    have = true
+
+    current_user.likes.each do |l|
+        if l.id == @topic.id
+          have = false
+          TopicUserCollect.find_by(:topic=>@topic,:user=>current_user).destroy
+        end
+    end
+
+    if have
+      TopicUserCollect.create(:topic=>@topic,:user=>current_user)
+      flash[:notice] = "收藏成功"
+    else
+      flash[:alert] = "取消收藏"
+    end
+      redirect_to topic_path(:id => @topic)
 
   end
 
@@ -64,7 +90,7 @@ class TopicsController < ApplicationController
       flash[:notice] = "新增成功"
       redirect_to topics_path
     else
-      flash[:alert] = "新增失敗"
+      flash.now[:alert] = "新增失敗"
       render "new"
     end
   end
@@ -77,7 +103,7 @@ class TopicsController < ApplicationController
       flash[:notice] = "編輯成功"
       redirect_to topics_path(:page=>params[:page])
     else
-      flash[:alert] = "編輯失敗"
+      flash.now[:alert] = "編輯失敗"
       render "new"
     end
   end

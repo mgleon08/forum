@@ -9,3 +9,7 @@
 Category.create!(:name=>"飲食")
 Category.create!(:name=>"訓練")
 Category.create!(:name=>"器材")
+Category.create!(:name=>"增肌")
+Category.create!(:name=>"減脂")
+Category.create!(:name=>"雕塑")
+Category.create!(:name=>"其他")

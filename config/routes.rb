@@ -1,17 +1,24 @@
 Rails.application.routes.draw do
     devise_for :users
 
+    resources :profiles
+
     resources :topics do
       resources :comments, :controller => "topic_comments"
     collection do
-        get :about
+        get  :about
+        post :bulk_delete
+    end
+
+    member do
+      get :collect
     end
   end
 
   namespace :admin do
-  resources :topics
-  resources :users
-  resources :categories
+    resources :topics
+    resources :users
+    resources :categories
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

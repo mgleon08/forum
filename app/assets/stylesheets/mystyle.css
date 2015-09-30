@@ -1,7 +1,12 @@
 .right{
   text-align: right;
 }
+
 .mar{
   display: inline;
   line-height: 40px;
+}
+
+.hight{
+  line-height:25px;
 }

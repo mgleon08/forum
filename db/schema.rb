@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150929103326) do
+ActiveRecord::Schema.define(version: 20150930022413) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -31,13 +31,23 @@ ActiveRecord::Schema.define(version: 20150929103326) do
   add_index "comments", ["user_id"], name: "index_comments_on_user_id"
 
   create_table "profiles", force: :cascade do |t|
+    t.text     "profile"
     t.integer  "user_id"
-    t.text     "user_profile"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "profiles", ["user_id"], name: "index_profiles_on_user_id"
+
+  create_table "topic_user_collects", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "topic_user_collects", ["topic_id"], name: "index_topic_user_collects_on_topic_id"
+  add_index "topic_user_collects", ["user_id"], name: "index_topic_user_collects_on_user_id"
 
   create_table "topics", force: :cascade do |t|
     t.string   "name"
@@ -70,6 +80,7 @@ ActiveRecord::Schema.define(version: 20150929103326) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "role"
+    t.text     "profile"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

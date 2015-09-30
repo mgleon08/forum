@@ -19,6 +19,7 @@
   <tr>
     <td>名稱</td>
     <td>信箱</td>
+    <td>個人簡介</td>
     <td>權限</td>
     <td>編輯</td>
   </tr>
@@ -26,6 +27,7 @@
   <tr>
     <td><%=u.user_name%></td>
     <td><%=u.email%></td>
+    <td><%=u.profile%></td>
     <td><%=u.role%></td>
     <td><%=link_to "編輯", edit_admin_user_path(u), :class => "btn btn-default"%></td>
   </tr>

@@ -17,6 +17,8 @@ gem 'bootstrap-sass', '~> 3.3.5'
 
 gem 'kaminari'
 
+gem 'bootstrap-kaminari-views'
+
 gem 'devise'
 
 gem 'gravatar-ultimate'
