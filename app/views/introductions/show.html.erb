@@ -1,9 +1,11 @@
-<h1>個人簡介</h1>
-<h3> <%=@user.profile%> </h3>
+<h1><%=@user.user_name%>的個人簡介</h1>
+<h3> <%=@user.introduction.try(:pro)%> </h3>
 <br>
 <br>
 <br>
-<%= link_to "編輯個人簡介", edit_profile_path(@user), :class => "btn btn-success"%>
+<%if current_user != nil%>
+  <%= link_to "編輯個人簡介", edit_introduction_path(@user), :class => "btn btn-success"%>
+<%end%>
 <br>
 
 <h1>發布過文章</h1>
@@ -16,9 +18,11 @@
     <td>回覆</td>
     <td>最後回覆時間</td>
     <td>最後回覆用戶</td>
+    <%if current_user != nil %>
     <td>狀態</td>
     <td>編輯</td>
     <td>刪除</td>
+    <%end%>
   </tr>
   <%@user.topics.each do |t|%>
   <tr>
@@ -40,13 +44,23 @@
     <td> <%=t.most_comment%> </td>
     <td> <%=t.last_comment%> </td>
     <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
-    <td><%=t.state%></td>
-    <td>
-      <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
-    </td>
-    <td>
-    <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
-    </td>
+    <%if current_user != nil %>
+          <td>
+          <%if current_user == t.user || current_user.admin?%>
+            <%=t.state%>
+          <%end%>
+          </td>
+          <td>
+            <%if current_user == t.user || current_user.admin?%>
+              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
+            <%end%>
+          </td>
+          <td>
+            <%if current_user == t.user || current_user.admin?%>
+              <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+            <%end%>
+          </td>
+        <%end%>
   </tr>
   <%end%>
 </table>
@@ -61,9 +75,11 @@
     <td>回覆</td>
     <td>最後回覆時間</td>
     <td>最後回覆用戶</td>
+    <%if current_user != nil %>
     <td>狀態</td>
     <td>編輯</td>
     <td>刪除</td>
+    <%end%>
   </tr>
 
   <%@user.likes.each do |t|%>
@@ -86,13 +102,23 @@
     <td> <%=t.most_comment%> </td>
     <td> <%=t.last_comment%> </td>
     <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
-    <td><%=t.state%></td>
-    <td>
-      <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
-    </td>
-    <td>
-    <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
-    </td>
+    <%if current_user != nil %>
+          <td>
+          <%if current_user == t.user || current_user.admin?%>
+            <%=t.state%>
+          <%end%>
+          </td>
+          <td>
+            <%if current_user == t.user || current_user.admin?%>
+              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
+            <%end%>
+          </td>
+          <td>
+            <%if current_user == t.user || current_user.admin?%>
+              <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+            <%end%>
+          </td>
+        <%end%>
   </tr>
   <%end%>
 </table>
@@ -105,16 +131,28 @@
   <tr>
     <td>討論話題</td>
     <td>回覆留言</td>
+    <%if current_user != nil %>
     <td>編輯</td>
     <td>刪除</td>
+    <%end%>
   </tr>
 
   <%@user.comments.each do |c|%>
   <tr>
     <td><%=link_to c.topic.try(:name), topic_path(c.topic)%></td>
     <td><%=c.user_comment%></td>
-    <td><%=link_to "編輯", edit_topic_comment_path(:topic_id => c.topic.id,:id=>c), :class => "btn btn-info" %></td>
-    <td><%=link_to "刪除", topic_comment_path(:topic_id => "c.topic.id",:id=>c), :method => :delete, :class => "btn btn-danger" %></td>
+    <%if current_user != nil %>
+          <td>
+            <%if current_user == @user || current_user.admin?%>
+              <%=link_to "編輯", edit_topic_comment_path(:topic_id => c.topic.id,:id=>c), :class => "btn btn-info" %>
+            <%end%>
+          </td>
+          <td>
+            <%if current_user == @user || current_user.admin?%>
+              <%=link_to "刪除", topic_comment_path(:topic_id => "c.topic.id",:id=>c), :method => :delete, :class => "btn btn-danger" %>
+            <%end%>
+          </td>
+        <%end%>
   </tr>
   <%end%>
 </table>

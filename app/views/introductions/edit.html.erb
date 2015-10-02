@@ -1,0 +1,8 @@
+<br>
+<%=form_for @user.introduction, :url => introduction_path(@user.introduction) do |u| %>
+  <%= u.label :pro, "內容:"%>
+  <%= u.text_area :pro, :class => "form-control"%>
+  <br>
+  <%= u.submit "送出", :class => "btn btn-success"%>
+  <%=link_to "回個人簡介", profiles_path, :class => "btn btn-primary"%>
+<%end%>

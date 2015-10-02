@@ -1,6 +1,7 @@
 class TopicsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show, :about]
-  before_action :set_topic, only: [:show, :edit, :update, :destroy]
+  before_action :set_show, only: [:show]
+  before_action :set_post, only: [:edit, :update, :destroy]
 
   def about
     @topics = Topic.all
@@ -42,11 +43,16 @@ class TopicsController < ApplicationController
   def index
 
     @categories = Category.all
-
-    @topics=Topic.all
-
+    #判斷是否為登入＆管理員＄一般人
+    if current_user && current_user.role == "admin"
+      @topics = Topic.all
+    elsif current_user
+      @topics = Topic.where( ["state = ? OR ( state = ? AND user_id = ?) ", "發布", "草稿", current_user.id ])
+    else
+      @topics = Topic.where( :state => "發布" )
+    end
+    #排序
     if params[:category]
-      @topics = @topics.where(:category_id => params[:category])
       if params[:order] == "most_comment"
         @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
       elsif params[:order] == "last_comment"
@@ -67,7 +73,7 @@ class TopicsController < ApplicationController
         @topics = @topics.order("id DESC")
       end
     end
-
+    #找自己話題
     if params[:user]
       @topics = @topics.where(:user_id => params[:user])
     end
@@ -122,11 +128,27 @@ class TopicsController < ApplicationController
 
   private
 
-  def set_topic
-    @topic = Topic.find(params[:id])
+  def set_show
+    if current_user
+      if current_user.role == "admin"
+      @topic = Topic.find(params[:id])
+      else
+      @topic = Topic.where(["state = ? OR ( state = ? AND user_id = ?) ", "發布", "草稿", current_user.id ]).find(params[:id])
+      end
+    else
+      @topic = Topic.where(state: "發布").find(params[:id])
+    end
+  end
+
+  def set_post
+    if current_user.role == "admin"
+      @topic = Topic.find(params[:id])
+    else
+      @topic = current_user.topics.find(params[:id])
+    end
   end
 
   def topic_params
-    params.require(:topic).permit(:name,:article,:category_id,:state)
+    params.require(:topic).permit(:name,:article,:category_id,:state,:picture_attributes => [:id, :title, :upload, :_destroy] )
   end
 end

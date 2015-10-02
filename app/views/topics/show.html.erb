@@ -1,6 +1,9 @@
-<h1><%=@topic.name%></h1>
+<h1><%=@topic.name%>  <span class="fb-like"></span></h1>
 <p><%=@topic.article%></p>
-
+<%if @topic.picture.try(:upload) != nil%>
+<div><%=image_tag(@topic.picture.upload.url(:medium), alt: "article_p")%></div>
+<br>
+<%end%>
 
 <%=link_to "回首頁", root_path(:page=>params[:page]), :class => "btn btn-primary"%>
 
@@ -13,6 +16,7 @@
   <td>頭像</td>
   <td>發布人</td>
   <td>留言內容</td>
+  <td>上傳圖片</td>
   <td>發布時間</td>
   <%if current_user != nil %>
   <td>編輯</td>
@@ -23,13 +27,20 @@
 
 <%@topic.comments.each do |t|%>
   <tr>
-    <td><%=image_tag(Gravatar.new(t.user.email).image_url,:size => "35x35")%></td>
+    <td><%=image_tag(Gravatar.new(t.user.email).image_url,:size => "35x35")%>
+    </td>
     <td><%=t.user.try(:user_name)%></td>
     <td><%=t.user_comment%></td>
+    <td>
+      <% if t.picture %>
+      <div><%=image_tag(t.picture.upload.url(:thumb), alt: "comment_p")%></div>
+      <br>
+      <%end%>
+    </td>
     <td><%=t.created_at%></td>
-    <%if current_user != nil %>
+    <%if current_user %>
       <td>
-        <%if current_user == t.user || current_user.role == "admin"%>
+        <%if current_user == t.user || current_user.admin?%>
           <%=link_to "編輯", edit_topic_comment_path(@topic,t), :class => "btn btn-info" %>
         <%end%>
       </td>
@@ -44,10 +55,23 @@
 </table>
 
 <%if current_user != nil %>
-  <%=form_for @comment, :url => topic_comments_path(@topic) do |t|%>
+  <%=form_for setup_comment(@comment), :url => topic_comments_path(@topic) do |t|%>
     <h2><%= t.label :user_comment, "留言:"%></h2>
     <%= t.text_area :user_comment, :class => "form-control"%>
     <br/>
+
+    <%= t.fields_for :picture do |picture_form| %>
+    <p>
+    <%= picture_form.label :upload, "上傳檔案" %>
+    <%= picture_form.file_field :upload %>
+
+    <% unless picture_form.object.new_record? %>
+        <%= picture_form.label :_destroy, 'Remove:' %>
+        <%= picture_form.check_box :_destroy %>
+    <% end %>
+    </p>
+    <% end %>
+
     <%= t.submit "送出", :class => "btn btn-success"%>
   <%end%>
 <%else%>

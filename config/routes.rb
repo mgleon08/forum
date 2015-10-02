@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
-    devise_for :users
+    devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
+
 
     resources :profiles
-
+    resources :introductions
     resources :topics do
       resources :comments, :controller => "topic_comments"
     collection do
@@ -10,9 +11,9 @@ Rails.application.routes.draw do
         post :bulk_delete
     end
 
-    member do
-      get :collect
-    end
+
+      get :collect, :on => :member
+
   end
 
   namespace :admin do

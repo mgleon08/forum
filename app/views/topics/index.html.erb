@@ -15,9 +15,16 @@
     <div class="col-sm-9">
         <%=link_to "類別選擇", "#", :class => "btn btn-primary", :disabled => true %>
         <%=link_to "All", root_path, :class => "btn btn-info" %>
-        <%@categories.each do |c|%>
-        <%=link_to c.name, topics_path(:category => c), :class => "btn btn-info" %>
-        <%end%>
+
+        <% @categories.each do |c| %>
+          <% is_active = ( c.id.to_s == params[:category] )? " btn-primary" : " btn-info" %>
+
+          <%= link_to topics_path(:category => c), :class => "btn category_color #{is_active}" do %>
+              <%=  c.name %>
+              <span class="badge"><%=c.topics.count%></span>
+          <% end %>
+
+        <% end %>
     </div>
 
     <div class="col-sm-3 right">
@@ -43,7 +50,14 @@
 <br/>
 <%= form_tag bulk_delete_topics_path,:meth => :delete do %>
 <table class="table table-striped">
-  <tr>
+  <tr  id = "all_topics" >
+    <%if current_user != nil %>
+        <%if current_user.role == "admin" %>
+      <td>
+          <%= check_box_tag "ids[]", "1", false %>
+        <%end%>
+      </td>
+    <%end%>
     <td>討論話題</td>
     <td>分類</td>
     <td>參與討論用戶</td>
@@ -61,55 +75,61 @@
 
 
   <%@topics.each do |t|%>
-    <%if t.state != "草稿" || (t.state == "草稿" && t.user == current_user) || current_user.try(:role) == "admin" %>
       <tr>
-        <td>
         <%if current_user != nil %>
           <%if current_user.role == "admin" %>
+        <td>
             <%= check_box_tag "ids[]", t.id, false %>
-          <%end%>
         <%end%>
+        </td>
+        <%end%>
+        <td>
         <%=link_to t.name, topic_path(t,:page=>params[:page])%>
         </td>
         <td> <%=t.category.try(:name)%> </td>
 
-            <%topic_comment_users = t.comments.map{ |c| c.user.try(:user_name)}%>
+            <%topic_comment_users = t.comments.map{ |c| c.user }%>
             <%topic_comment_users.uniq!%>
         <td>
         <%  topic_comment_users.each do |c| %>
-        <%= c %>
+        <%= link_to c.user_name, introduction_path(c) %>
         <%end%>
         </td>
+
         <td> <%=t.view%> </td>
-          <% t.most_comment = t.comments.count %>
-          <% t.last_comment = t.comments.last.try(:created_at) %>
-          <% t.save%>
+        <%t.most_comment = t.comments.count%>
         <td> <%=t.most_comment%> </td>
-        <td> <%=t.last_comment%> </td>
+        <%t.last_comment = t.comments.last.try(:created_at)%>
+        <td> <%=t.last_comment.try(:strftime, "%Y-%m-%d %T") %> </td>
         <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
-        <td> <%=t.user.try(:user_name)%> </td>
+        <td>
+
+        <%=link_to introduction_path(t.user) do%>
+          <%=image_tag(Gravatar.new(t.user.email).image_url,:size => "15x15")%>
+          <%=t.user.try(:user_name)%>
+        <%end%>
+        </td>
         <%if current_user != nil %>
           <td>
-          <%if current_user == t.user || current_user.role == "admin"%>
+          <%if current_user == t.user || current_user.admin?%>
             <%=t.state%>
           <%end%>
           </td>
           <td>
-            <%if current_user == t.user || current_user.role == "admin"%>
+            <%if current_user == t.user || current_user.admin?%>
               <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
             <%end%>
           </td>
           <td>
-            <%if current_user == t.user || current_user.role == "admin"%>
+            <%if current_user == t.user || current_user.admin?%>
               <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
             <%end%>
           </td>
         <%end%>
       </tr>
-    <%end%>
   <%end%>
 </table>
-  <%if current_user != nil %>
+  <%if current_user %>
     <%if current_user.role == "admin" %>
       <%= submit_tag "選取刪除" ,:class => "btn btn-danger"%>
     <% end %>
@@ -117,3 +137,18 @@
 <% end %>
 
 <%= paginate @topics, :theme => 'twitter-bootstrap-3', :pagination_class => "pagination-sm"%>
+
+
+<script>
+$(document).ready(function() {
+    $("#all_topics").click(function(){
+      if ( $(this).prop("checked") ) {
+        $("input[name='ids[]']").prop("checked",true)
+      } else {
+        $("input[name='ids[]']").prop("checked",false)
+      }
+    });
+ });
+
+</script>
+

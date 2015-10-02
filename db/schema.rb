@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150930022413) do
+ActiveRecord::Schema.define(version: 20151002084138) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -30,14 +30,29 @@ ActiveRecord::Schema.define(version: 20150930022413) do
   add_index "comments", ["topic_id"], name: "index_comments_on_topic_id"
   add_index "comments", ["user_id"], name: "index_comments_on_user_id"
 
-  create_table "profiles", force: :cascade do |t|
-    t.text     "profile"
+  create_table "introductions", force: :cascade do |t|
+    t.text     "pro"
     t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "profiles", ["user_id"], name: "index_profiles_on_user_id"
+  add_index "introductions", ["user_id"], name: "index_introductions_on_user_id"
+
+  create_table "pictures", force: :cascade do |t|
+    t.string   "title"
+    t.string   "upload_file_name"
+    t.string   "upload_content_type"
+    t.integer  "upload_file_size"
+    t.datetime "upload_updated_at"
+    t.integer  "topic_id"
+    t.integer  "comment_id"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
+  add_index "pictures", ["comment_id"], name: "index_pictures_on_comment_id"
+  add_index "pictures", ["topic_id"], name: "index_pictures_on_topic_id"
 
   create_table "topic_user_collects", force: :cascade do |t|
     t.integer  "user_id"
@@ -80,10 +95,15 @@ ActiveRecord::Schema.define(version: 20150930022413) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "role"
-    t.text     "profile"
+    t.string   "provider"
+    t.string   "uid"
+    t.string   "fb_token"
+    t.string   "fb_raw_data"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["provider"], name: "index_users_on_provider"
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["uid"], name: "index_users_on_uid"
 
 end

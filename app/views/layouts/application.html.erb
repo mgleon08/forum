@@ -8,36 +8,48 @@
 
 </head>
 <body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v2.4&appId=300222283470187";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 <div class="container">
-    <% if current_user %>
+      <% if current_user %>
+        <br/>
+        <%= link_to('回首頁', root_path) %> |
+        Hi,<%= current_user.user_name %>
+        <%=image_tag(Gravatar.new(current_user.email).image_url,:size => "20x20")%>
+        <%= link_to('登出', destroy_user_session_path, :method => :delete) %>
+        |
+        <%= link_to('修改密碼', edit_registration_path(:user)) %>
+        |
+        <%= link_to('個人簡介', introduction_path(current_user)) %>
+        <%if current_user.admin?%>
+        |
+        <%=link_to "管理者介面", admin_topics_path%>
+        <%end%>
+      <% else %>
+        <%= link_to('回首頁', root_path) %>
+        |
+        <%= link_to('註冊', new_registration_path(:user)) %>
+        |
+        <%= link_to('登入', new_session_path(:user)) %>
+        |
+        <%= link_to "Facebook",user_omniauth_authorize_path(:facebook) %>
+      <% end %>
       <br/>
-      <%= link_to('回首頁', root_path) %> |
-      Hi,<%= current_user.user_name %>
-      <%=image_tag(Gravatar.new(current_user.email).image_url,:size => "20x20")%>
-      <%= link_to('登出', destroy_user_session_path, :method => :delete) %>
-      |
-      <%= link_to('修改密碼', edit_registration_path(:user)) %>
-      |
-      <%= link_to('個人簡介', profiles_path) %>
-      <%if current_user.role == "admin"%>
-      |
-      <%=link_to "管理者介面", admin_topics_path%>
+      <%if flash[:notice].present?%>
+        <br/>
+        <div class="alert alert-success" role="alert"><%= flash[:notice] %></div>
       <%end%>
-    <% else %>
-      <%= link_to('註冊', new_registration_path(:user)) %>
-      |
-      <%= link_to('登入', new_session_path(:user)) %>
-    <% end %>
-    <br/>
-    <%if flash[:notice].present?%>
-      <br/>
-      <div class="alert alert-success" role="alert"><%= flash[:notice] %></div>
-    <%end%>
-    <%if flash[:alert].present?%>
-      <br/>
-      <div class="alert alert-danger" role="alert"><%= flash[:alert] %></div>
-    <%end%>
+      <%if flash[:alert].present?%>
+        <br/>
+        <div class="alert alert-danger" role="alert"><%= flash[:alert] %></div>
+      <%end%>
     <%= yield %>
 </div>
 </body>

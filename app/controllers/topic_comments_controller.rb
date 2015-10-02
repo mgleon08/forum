@@ -33,7 +33,6 @@ class TopicCommentsController < ApplicationController
   end
 
   def destroy
-
     @comment = @topic.comments.find(params[:id])
     @comment.destroy
     redirect_to topic_path(@topic)
@@ -46,6 +45,6 @@ class TopicCommentsController < ApplicationController
   end
 
   def comment_params
-    params.require(:comment).permit(:user_comment)
+    params.require(:comment).permit(:user_comment,:picture_attributes => [:id, :title, :upload, :_destroy])
   end
 end

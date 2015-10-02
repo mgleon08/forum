@@ -1,7 +1,27 @@
-<%=form_for @comment, :url => topic_comment_path(@topic,@comment) do |t|%>
-<h2><%= t.label :user_comment, "留言:"%></h2>
-<%= t.text_area :user_comment, :class => "form-control"%>
-<br/>
+<%=form_for setup_comment(@comment), :url => topic_comment_path(@topic,@comment) do |t|%>
+  <h2><%= t.label :user_comment, "留言:"%></h2>
+      <%= t.text_area :user_comment, :class => "form-control"%>
+  <br/>
+
+  <% unless @comment.picture.new_record? %>
+    <div>
+      <%=image_tag( @comment.picture.upload.url(:thumb), alt: "article_p")%>
+    </div>
+  <%end%>
+
+      <%= t.fields_for :picture do |picture_form| %>
+  <div class="form-group">
+      <%= picture_form.label :upload, "上傳檔案" %>
+      <%= picture_form.file_field :upload %>
+  </div>
+  <div class="form-group">
+      <% unless picture_form.object.new_record? %>
+          <%= picture_form.label :_destroy, 'Remove:' %>
+          <%= picture_form.check_box :_destroy %>
+      <% end %>
+  </div>
+      <% end %>
+
 <%= t.submit "送出", :class => "btn btn-success"%>
 <%=link_to "回首頁", topic_path(@topic), :class => "btn btn-primary"%>
 <%end%>

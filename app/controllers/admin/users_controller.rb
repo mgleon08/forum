@@ -1,5 +1,7 @@
 class Admin::UsersController < ApplicationController
 
+  before_action :check_admin
+
   def edit
     @user = User.find(params[:id])
   end
@@ -19,6 +21,13 @@ class Admin::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:user_name,:email,:role,:profile)
+  end
+
+  def check_admin
+    unless current_user.role == "admin"
+      raise ActiveRecord::RecordNotFound #導向404
+      redirect_to root_path
+    end
   end
 
 end

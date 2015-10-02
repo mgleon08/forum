@@ -13,13 +13,13 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
+
 gem 'bootstrap-sass', '~> 3.3.5'
-
 gem 'kaminari'
-
 gem 'bootstrap-kaminari-views'
-
 gem 'devise'
+gem 'omniauth-facebook'
+gem "paperclip"
 
 gem 'gravatar-ultimate'
 # Use jquery as the JavaScript library

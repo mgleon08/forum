@@ -1,5 +1,7 @@
 class Admin::CategoriesController < ApplicationController
 
+  before_action :check_admin
+
   def destroy
     @category = Category.find(params[:id])
     if @category.topics.count == 0
@@ -46,4 +48,12 @@ class Admin::CategoriesController < ApplicationController
   def category_params
     params.require(:category).permit(:name)
   end
+
+  def check_admin
+    unless current_user.role == "admin"
+      raise ActiveRecord::RecordNotFound #導向404
+      redirect_to root_path
+    end
+  end
+
 end

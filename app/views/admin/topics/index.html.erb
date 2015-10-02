@@ -27,7 +27,7 @@
   <tr>
     <td><%=u.user_name%></td>
     <td><%=u.email%></td>
-    <td><%=u.profile%></td>
+    <td><%=u.introduction.try(:pro)%></td>
     <td><%=u.role%></td>
     <td><%=link_to "編輯", edit_admin_user_path(u), :class => "btn btn-default"%></td>
   </tr>

@@ -1,8 +1,14 @@
 <h1>編輯文章</h1>
 
-<%=form_for @topic, :url => topic_path(@topic,:page=>params[:page]) do |t|%>
+<%=form_for setup_topic(@topic), :url => topic_path(@topic,:page=>params[:page]) do |t|%>
 <%=render :partial => "form" , :locals => {:t=>t}%>
-<br/>
+
+<% if @topic.picture.upload.exists? %>
+  <div>
+    <%=image_tag( @topic.picture.upload.url(:thumb), alt: "article_p")%>
+  </div>
+<%end%>
+
 <%= t.submit "送出", :class => "btn btn-success"%>
 <%=link_to "回首頁", root_path, :class => "btn btn-primary"%>
 <%end%>
