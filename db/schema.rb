@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151002084138) do
+ActiveRecord::Schema.define(version: 20151002170429) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -39,6 +39,16 @@ ActiveRecord::Schema.define(version: 20151002084138) do
 
   add_index "introductions", ["user_id"], name: "index_introductions_on_user_id"
 
+  create_table "likes", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "likes", ["topic_id"], name: "index_likes_on_topic_id"
+  add_index "likes", ["user_id"], name: "index_likes_on_user_id"
+
   create_table "pictures", force: :cascade do |t|
     t.string   "title"
     t.string   "upload_file_name"
@@ -53,6 +63,16 @@ ActiveRecord::Schema.define(version: 20151002084138) do
 
   add_index "pictures", ["comment_id"], name: "index_pictures_on_comment_id"
   add_index "pictures", ["topic_id"], name: "index_pictures_on_topic_id"
+
+  create_table "subscribes", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "subscribes", ["topic_id"], name: "index_subscribes_on_topic_id"
+  add_index "subscribes", ["user_id"], name: "index_subscribes_on_user_id"
 
   create_table "topic_user_collects", force: :cascade do |t|
     t.integer  "user_id"

@@ -8,12 +8,22 @@ class TopicCommentsController < ApplicationController
   def create
     @comment = @topic.comments.new(comment_params)
     @comment.user = current_user
-    if @comment.save
-      flash[:notice] = "留言成功"
-      redirect_to topic_path(@topic)
-    else
-      flash[:alert] = "留言失敗(不能留空白)"
-      redirect_to topic_path(@topic)
+
+    respond_to do |format|
+      if @comment.save
+
+        format.html {
+          redirect_to topic_path(@topic)
+          flash[:notice] = "留言成功"
+        }
+        format.js
+      else
+        format.html {
+          redirect_to topic_path(@topic)
+          flash[:alert] = "留言失敗(不能留空白)"
+        }
+        format.js
+      end
     end
   end
 
@@ -35,7 +45,13 @@ class TopicCommentsController < ApplicationController
   def destroy
     @comment = @topic.comments.find(params[:id])
     @comment.destroy
-    redirect_to topic_path(@topic)
+
+    respond_to do |format|
+     format.html {
+       redirect_to topic_path(@topic)
+     }
+    format.js
+    end
   end
 
   private

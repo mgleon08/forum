@@ -8,7 +8,10 @@ class User < ActiveRecord::Base
   has_many :comments, dependent: :destroy
   has_many :topics, dependent: :destroy
   has_many :topic_user_collects
-  has_many :likes , :through => :topic_user_collects,:source => :topic
+  has_many :likes
+  has_many :likess , :through => :likes, :source => :topic
+  has_many :subscribes
+  has_many :collects , :through => :topic_user_collects,:source => :topic
   has_one :introduction
 
   serialize :fb_raw_data

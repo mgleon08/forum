@@ -1,0 +1,9 @@
+$(document).ready(function() {
+  $("#sub").toggleClass("<%=@is_subscribe%>")
+  $("#sub").toggleClass("<%=@is_subscribe2%>")
+  $("#sub-name").text("<%=@is_subscribe_name%>");
+  $("#sub-number").text(<%=@topic.subscribes.count%>);
+  $("#ss").text("<%=@ss%>");
+});
+
+

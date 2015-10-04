@@ -48,13 +48,14 @@
 <%end%>
 <br/>
 <br/>
-<%= form_tag bulk_delete_topics_path,:meth => :delete do %>
+<%= form_tag bulk_delete_topics_path do %>
+
 <table class="table table-striped">
-  <tr  id = "all_topics" >
+  <tr id="all_topics" >
     <%if current_user != nil %>
         <%if current_user.role == "admin" %>
       <td>
-          <%= check_box_tag "ids[]", "1", false %>
+          <%= check_box_tag "ids[]", "1", false%>
         <%end%>
       </td>
     <%end%>
@@ -142,13 +143,14 @@
 <script>
 $(document).ready(function() {
     $("#all_topics").click(function(){
-      if ( $(this).prop("checked") ) {
+      if ( $(this).prop("checked")) {
+         console.log("11111")
         $("input[name='ids[]']").prop("checked",true)
       } else {
+        console.log("dsdf")
         $("input[name='ids[]']").prop("checked",false)
       }
     });
  });
-
 </script>
 

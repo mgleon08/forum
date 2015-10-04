@@ -1,0 +1,26 @@
+<tr id="comment<%=comment.id%>">
+    <td><%=comment.id%></td>
+    <td><%=image_tag(Gravatar.new(comment.user.email).image_url,:size => "35x35")%>
+    </td>
+    <td><%=comment.user.try(:user_name)%></td>
+    <td><%=comment.user_comment%></td>
+    <td>
+      <% if comment.picture %>
+      <div><%=image_tag(comment.picture.upload.url(:thumb), alt: "comment_p")%></div>
+      <br>
+      <%end%>
+    </td>
+    <td><%=comment.created_at.strftime("%Y-%m-%d %T")%></td>
+    <%if current_user %>
+      <td>
+        <%if current_user == comment.user || current_user.admin?%>
+          <%=link_to "編輯", edit_topic_comment_path(@topic,comment), :class => "btn btn-info" %>
+        <%end%>
+      </td>
+      <td>
+      <%if current_user == comment.user || current_user.role == "admin" %>
+        <%=link_to "刪除", topic_comment_path(@topic,comment), :method => :delete, :class => "btn btn-danger", remote: true %>
+      <%end%>
+      </td>
+    <%end%>
+  </tr>

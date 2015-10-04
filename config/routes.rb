@@ -11,8 +11,9 @@ Rails.application.routes.draw do
         post :bulk_delete
     end
 
-
       get :collect, :on => :member
+      get :like, :on => :member
+      get :subscribe, :on => :member
 
   end
 

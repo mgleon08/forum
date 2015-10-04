@@ -1,0 +1,9 @@
+$(document).ready(function() {
+  $("#lik").toggleClass("<%=@is_like%>")
+  $("#lik").toggleClass("<%=@is_like2%>")
+  $("#lik-name").text("<%=@is_like_name%>");
+  $("#lik-number").text(<%=@topic.likes.count%>);
+  $("#ll").text("<%=@ll%>");
+});
+
+

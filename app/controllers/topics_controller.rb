@@ -19,29 +19,122 @@ class TopicsController < ApplicationController
     redirect_to root_path
   end
 
+# 收藏
   def collect
     @topic = Topic.find(params[:id])
     have = true
 
-    current_user.likes.each do |l|
-        if l.id == @topic.id
-          have = false
-          TopicUserCollect.find_by(:topic=>@topic,:user=>current_user).destroy
-        end
+    @is_collect = "btn-default"
+    @is_collect2 = "btn-warning"
+    @is_collect_name = "已收藏"
+
+    if current_user != nil
+      current_user.collects.each do |c|
+          if c.id == @topic.id
+            have = false
+            @is_collect = "btn-warning"
+            @is_collect2 = "btn-default"
+            @is_collect_name = "未收藏"
+            TopicUserCollect.find_by(:topic=>@topic,:user=>current_user).destroy
+            @cc=@topic.collects.map{|cc| cc.user_name}
+            @cc=@cc.join(" ")
+          end
+      end
+    end
+
+      if have
+        TopicUserCollect.create(:topic=>@topic,:user=>current_user)
+        @cc=@topic.collects.map{|cc| cc.user_name}
+        @cc=@cc.join("")
+      end
+
+
+
+    respond_to do |format|
+      format.html {
+        redirect_to topic_path(:id => @topic)
+     }
+      format.js
+    end
+  end
+ #like,model設定跟收藏不一樣所以是l.topic_id
+  def like
+    @topic = Topic.find(params[:id])
+    have = true
+
+    @is_like = "btn-default"
+    @is_like2 = "btn-info"
+    @is_like_name = "Like"
+
+    if current_user != nil
+      current_user.likes.each do |l|
+          if l.topic_id == @topic.id
+            have = false
+            @is_like = "btn-info"
+            @is_like2 = "btn-default"
+            @is_like_name = "Un-Like"
+            Like.find_by(:topic=>@topic,:user=>current_user).destroy
+            @ll=@topic.likes.map{|ll| ll.user.user_name}
+            @ll=@ll.join(" ")
+          end
+      end
     end
 
     if have
-      TopicUserCollect.create(:topic=>@topic,:user=>current_user)
-      flash[:notice] = "收藏成功"
-    else
-      flash[:alert] = "取消收藏"
+      Like.create(:topic=>@topic,:user=>current_user)
+      @ll=@topic.likes.map{|ll| ll.user.user_name}
+      @ll=@ll.join(" ")
     end
-      redirect_to topic_path(:id => @topic)
+
+    respond_to do |format|
+      format.html {
+        redirect_to topic_path(:id => @topic)
+      }
+      format.js
+    end
+
+  end
+# 訂閱
+  def subscribe
+   @topic = Topic.find(params[:id])
+    have = true
+
+    @is_subscribe = "btn-default"
+    @is_subscribe2 = "btn-success"
+    @is_subscribe_name = "已訂閱"
+
+    if current_user != nil
+      current_user.subscribes.each do |s|
+          if s.topic_id == @topic.id
+            have = false
+            @is_subscribe = "btn-success"
+            @is_subscribe2 = "btn-default"
+            @is_subscribe_name = "未訂閱"
+            Subscribe.find_by(:topic=>@topic,:user=>current_user).destroy
+            @ss=@topic.subscribes.map{|ss| ss.user.user_name}
+            @ss=@ss.join(" ")
+          end
+      end
+    end
+
+    if have
+     Subscribe.create(:topic=>@topic,:user=>current_user)
+     @ss=@topic.subscribes.map{|ss| ss.user.user_name}
+     @ss=@ss.join(" ")
+    end
+
+    respond_to do |format|
+      format.html {
+        redirect_to topic_path(:id => @topic)
+      }
+      format.js
+    end
 
   end
 
-  def index
 
+  def index
+    @user = current_user
     @categories = Category.all
     #判斷是否為登入＆管理員＄一般人
     if current_user && current_user.role == "admin"
@@ -51,7 +144,7 @@ class TopicsController < ApplicationController
     else
       @topics = Topic.where( :state => "發布" )
     end
-    #排序
+    #排序，先看有沒有類別，在排序
     if params[:category]
       if params[:order] == "most_comment"
         @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
@@ -94,11 +187,12 @@ class TopicsController < ApplicationController
     @topic.user = current_user
     if @topic.save
       flash[:notice] = "新增成功"
-      redirect_to topics_path
+
     else
       flash.now[:alert] = "新增失敗"
       render "new"
     end
+
   end
 
   def edit
@@ -118,7 +212,62 @@ class TopicsController < ApplicationController
     @comment = Comment.new
     @topic.view += 1
     @topic.save
+    # 收藏
+    @is_collect = "btn-default"
+    @is_collect_name = "未收藏"
+
+    if current_user != nil
+      current_user.collects.each do |c|
+          if c.id == @topic.id
+            @is_collect = "btn-warning"
+            @is_collect_name = "已收藏"
+          end
+      end
+    end
+
+    # 收藏的人名
+    @cc=@topic.collects.map{|cc| cc.user_name}
+    @cc=@cc.join(" ")
+
+    # like
+    @is_like = "btn-default"
+    @is_like_name = "un-like"
+
+    if current_user != nil
+      current_user.likes.each do |l|
+          if l.topic_id == @topic.id
+            @is_like = "btn-info"
+            @is_like_name = "like"
+          end
+      end
+    end
+
+    # like的人名
+    @ll=@topic.likes.map{|ll| ll.user.user_name}
+    @ll=@ll.join(" ")
+
+
+    # subscribe
+    @is_subscribe = "btn-default"
+    @is_subscribe_name = "未訂閱"
+
+    if current_user != nil
+      current_user.subscribes.each do |s|
+          if s.topic_id == @topic.id
+            @is_subscribe = "btn-success"
+            @is_subscribe_name = "訂閱"
+          end
+      end
+    end
+
+    # subscribe的人名
+    @ss=@topic.subscribes.map{|ss| ss.user.user_name}
+    @ss=@ss.join(" ")
+
+
+
   end
+
 
   def destroy
     @topic.destroy
@@ -149,6 +298,6 @@ class TopicsController < ApplicationController
   end
 
   def topic_params
-    params.require(:topic).permit(:name,:article,:category_id,:state,:picture_attributes => [:id, :title, :upload, :_destroy] )
+    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:picture_attributes => [:id, :title, :upload, :_destroy] )
   end
 end
