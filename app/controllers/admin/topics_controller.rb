@@ -5,6 +5,7 @@ class Admin::TopicsController < ApplicationController
   def index
     @users = User.all
     @categories = Category.all
+    @tags = Tag.all
   end
 
   protected

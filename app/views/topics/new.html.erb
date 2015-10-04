@@ -4,5 +4,6 @@
 <%=render :partial => "form" , :locals => {:t=>t}%>
 <br/>
 <%= t.submit "送出", :class => "btn btn-success"%>
+<%=link_to "新增新的Tag", new_topic_tag_path(:topic), :class => "btn btn-default"%>
 <%=link_to "回首頁", root_path, :class => "btn btn-primary"%>
 <%end%>

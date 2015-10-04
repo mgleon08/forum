@@ -1,0 +1,9 @@
+  <br>
+<%=form_for @tag, :url => topic_tags_path(:topic,@tag) do |c| %>
+  <%= c.label :name, "標籤名稱:"%>
+  <%= c.text_field :name, :class => "form-control"%>
+  <br>
+  <%= c.submit "送出", :class => "btn btn-success"%>
+  <%=link_to "回上一頁", new_topic_path, :class => "btn btn-primary"%>
+<%end%>
+

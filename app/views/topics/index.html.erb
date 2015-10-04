@@ -17,7 +17,7 @@
         <%=link_to "All", root_path, :class => "btn btn-info" %>
 
         <% @categories.each do |c| %>
-          <% is_active = ( c.id.to_s == params[:category] )? " btn-primary" : " btn-info" %>
+          <% is_active = ( c.id.to_s == params[:category] )? " btn-warning" : " btn-info" %>
 
           <%= link_to topics_path(:category => c), :class => "btn category_color #{is_active}" do %>
               <%=  c.name %>
@@ -34,20 +34,46 @@
       <% end %>
     </div>
   </div>
+
 <br>
-<%=link_to "按回覆排序", topics_path( :order => "most_comment", :category => params[:category]), :class => "btn btn-default" %>
 
-<%=link_to "按回覆時間排序", topics_path( :order => "last_comment", :category => params[:category]), :class => "btn btn-default" %>
+  <div class="row">
+    <div class="col-sm-12">
+        <%=link_to "標籤選擇", "#", :class => "btn btn-danger", :disabled => true %>
+        <%=link_to "All", root_path, :class => "btn btn-danger" %>
 
-<%=link_to "按觀看人數排序", topics_path( :order => "view", :category => params[:category]), :class => "btn btn-default" %>
+        <% @tags.each do |c| %>
+          <% is_active = ( c.id.to_s == params[:tag] )? " btn-warning" : " btn-danger" %>
 
-<%=link_to "按文章時間排序", topics_path( :order => "default", :category => params[:category]), :class => "btn btn-default" %>
+          <%= link_to topics_path(:tag => c), :class => "btn category_color #{is_active}" do %>
+              <%=  c.name %>
+              <span class="badge"><%=c.topics.count%></span>
+          <% end %>
 
-<%if current_user != nil %>
-  <%=link_to "找自己的話題", topics_path(:user => current_user ), :class => "btn btn-default" %>
-<%end%>
+        <% end %>
+    </div>
+  </div>
+
+<br>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <%=link_to "按回覆排序", topics_path( :order => "most_comment", :category => params[:category]), :class => "btn btn-default" %>
+
+      <%=link_to "按回覆時間排序", topics_path( :order => "last_comment", :category => params[:category]), :class => "btn btn-default" %>
+
+      <%=link_to "按觀看人數排序", topics_path( :order => "view", :category => params[:category]), :class => "btn btn-default" %>
+
+      <%=link_to "按文章時間排序", topics_path( :order => "default", :category => params[:category]), :class => "btn btn-default" %>
+
+      <%if current_user != nil %>
+        <%=link_to "找自己的話題", topics_path(:user => current_user ), :class => "btn btn-default" %>
+      <%end%>
+    </div>
+  </div>
+
 <br/>
-<br/>
+
 <%= form_tag bulk_delete_topics_path do %>
 
 <table class="table table-striped">
@@ -61,6 +87,7 @@
     <%end%>
     <td>討論話題</td>
     <td>分類</td>
+    <td>Tag</td>
     <td>參與討論用戶</td>
     <td>觀看</td>
     <td>回覆</td>
@@ -88,7 +115,11 @@
         <%=link_to t.name, topic_path(t,:page=>params[:page])%>
         </td>
         <td> <%=t.category.try(:name)%> </td>
-
+        <td>
+          <%t.tags.each do |tag|%>
+           <%=tag.name%>
+          <%end%>
+        </td>
             <%topic_comment_users = t.comments.map{ |c| c.user }%>
             <%topic_comment_users.uniq!%>
         <td>

@@ -19,7 +19,7 @@ class TopicsController < ApplicationController
     redirect_to root_path
   end
 
-# 收藏
+#收藏
   def collect
     @topic = Topic.find(params[:id])
     have = true
@@ -57,7 +57,8 @@ class TopicsController < ApplicationController
       format.js
     end
   end
- #like,model設定跟收藏不一樣所以是l.topic_id
+
+#like,model設定跟收藏不一樣所以是l.topic_id
   def like
     @topic = Topic.find(params[:id])
     have = true
@@ -94,7 +95,8 @@ class TopicsController < ApplicationController
     end
 
   end
-# 訂閱
+
+#訂閱
   def subscribe
    @topic = Topic.find(params[:id])
     have = true
@@ -136,7 +138,9 @@ class TopicsController < ApplicationController
   def index
     @user = current_user
     @categories = Category.all
-    #判斷是否為登入＆管理員＄一般人
+    @tags = Tag.all
+
+    #判斷是否為會員＆管理員＄一般人，撈出相對應的資料，再進行排序的動作
     if current_user && current_user.role == "admin"
       @topics = Topic.all
     elsif current_user
@@ -144,7 +148,8 @@ class TopicsController < ApplicationController
     else
       @topics = Topic.where( :state => "發布" )
     end
-    #排序，先看有沒有類別，在排序
+
+    #排序，先看有沒有類別，在排序，一對多
     if params[:category]
       if params[:order] == "most_comment"
         @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
@@ -166,11 +171,19 @@ class TopicsController < ApplicationController
         @topics = @topics.order("id DESC")
       end
     end
+
+    #標籤分類，多對多
+    if params[:tag]
+      @tag = Tag.find(params[:tag])
+      @topics = @tag.topics
+    end
+
     #找自己話題
     if params[:user]
       @topics = @topics.where(:user_id => params[:user])
     end
 
+    #關鍵字
     if params[:keyword]
       @topics = @topics.where( [ "name like ?", "%#{params[:keyword]}%" ] )
     end
@@ -185,9 +198,10 @@ class TopicsController < ApplicationController
   def create
     @topic = Topic.new(topic_params)
     @topic.user = current_user
+
     if @topic.save
       flash[:notice] = "新增成功"
-
+      redirect_to topics_path
     else
       flash.now[:alert] = "新增失敗"
       render "new"
@@ -212,6 +226,7 @@ class TopicsController < ApplicationController
     @comment = Comment.new
     @topic.view += 1
     @topic.save
+
     # 收藏
     @is_collect = "btn-default"
     @is_collect_name = "未收藏"
@@ -298,6 +313,6 @@ class TopicsController < ApplicationController
   end
 
   def topic_params
-    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:picture_attributes => [:id, :title, :upload, :_destroy] )
+    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:tag_ids=>[],:picture_attributes => [:id, :title, :upload, :_destroy] )
   end
 end

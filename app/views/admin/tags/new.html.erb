@@ -1,0 +1,9 @@
+  <br>
+<%=form_for @tag, :url => admin_tags_path(@tag) do |c| %>
+  <%= c.label :name, "標籤名稱:"%>
+  <%= c.text_field :name, :class => "form-control"%>
+  <br>
+  <%= c.submit "送出", :class => "btn btn-success"%>
+  <%=link_to "回管理者介面", admin_topics_path, :class => "btn btn-primary"%>
+<%end%>
+

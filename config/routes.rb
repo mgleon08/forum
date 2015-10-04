@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
     devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
 
-
-    resources :profiles
     resources :introductions
+
     resources :topics do
       resources :comments, :controller => "topic_comments"
+      resources :tags, :controller => "topic_tags"
     collection do
         get  :about
         post :bulk_delete
@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :topics
     resources :users
     resources :categories
+    resources :tags
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

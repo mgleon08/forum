@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151002170429) do
+ActiveRecord::Schema.define(version: 20151004093748) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -73,6 +73,22 @@ ActiveRecord::Schema.define(version: 20151002170429) do
 
   add_index "subscribes", ["topic_id"], name: "index_subscribes_on_topic_id"
   add_index "subscribes", ["user_id"], name: "index_subscribes_on_user_id"
+
+  create_table "tags", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "topic_tag_ships", force: :cascade do |t|
+    t.integer  "topic_id"
+    t.integer  "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "topic_tag_ships", ["tag_id"], name: "index_topic_tag_ships_on_tag_id"
+  add_index "topic_tag_ships", ["topic_id"], name: "index_topic_tag_ships_on_topic_id"
 
   create_table "topic_user_collects", force: :cascade do |t|
     t.integer  "user_id"
