@@ -3,6 +3,7 @@ class TopicsController < ApplicationController
   before_action :set_show, only: [:show]
   before_action :set_post, only: [:edit, :update, :destroy]
 
+
   def about
     @topics = Topic.all
     @comments = Comment.all
@@ -35,7 +36,7 @@ class TopicsController < ApplicationController
             @is_collect = "btn-warning"
             @is_collect2 = "btn-default"
             @is_collect_name = "未收藏"
-            TopicUserCollect.find_by(:topic=>@topic,:user=>current_user).destroy
+            TopicUserCollect.find_by(:topic => @topic,:user=>current_user).destroy
             @cc=@topic.collects.map{|cc| cc.user_name}
             @cc=@cc.join(" ")
           end
@@ -43,7 +44,7 @@ class TopicsController < ApplicationController
     end
 
       if have
-        TopicUserCollect.create(:topic=>@topic,:user=>current_user)
+        TopicUserCollect.create(:topic => @topic,:user=>current_user)
         @cc=@topic.collects.map{|cc| cc.user_name}
         @cc=@cc.join("")
       end
@@ -136,6 +137,7 @@ class TopicsController < ApplicationController
 
 
   def index
+
     @user = current_user
     @categories = Category.all
     @tags = Tag.all
@@ -151,6 +153,7 @@ class TopicsController < ApplicationController
 
     #排序，先看有沒有類別，在排序，一對多
     if params[:category]
+
       if params[:order] == "most_comment"
         @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
       elsif params[:order] == "last_comment"
@@ -160,7 +163,22 @@ class TopicsController < ApplicationController
       else
         @topics = @topics.order("id DESC").where(:category_id => params[:category])
       end
+
+    elsif params[:tag]
+
+      @tag = Tag.find(params[:tag])
+      if params[:order] == "most_comment"
+        @topics = @tag.topics.order("most_comment DESC")
+      elsif params[:order] == "last_comment"
+        @topics = @tag.topics.order("last_comment DESC")
+      elsif params[:order] == "view"
+        @topics = @tag.topics.order("view DESC")
+      else
+        @topics = @tag.topics.order("id DESC")
+      end
+
     else
+
       if params[:order] == "most_comment"
         @topics = @topics.order("most_comment DESC")
       elsif params[:order] == "last_comment"
@@ -173,10 +191,7 @@ class TopicsController < ApplicationController
     end
 
     #標籤分類，多對多
-    if params[:tag]
-      @tag = Tag.find(params[:tag])
-      @topics = @tag.topics
-    end
+
 
     #找自己話題
     if params[:user]
@@ -224,8 +239,15 @@ class TopicsController < ApplicationController
 
   def show
     @comment = Comment.new
-    @topic.view += 1
-    @topic.save
+
+    if cookies["view-topic-#{@topic.id}"]
+      # do nothing
+    else
+      # view+1
+      @topic.increment!(:view)
+      Rails.logger.debug("Topic Hit! : #{@topic.id}" )
+      cookies["view-topic-#{@topic.id}"] = "yes!"
+    end
 
     # 收藏
     @is_collect = "btn-default"
@@ -279,8 +301,6 @@ class TopicsController < ApplicationController
     @ss=@topic.subscribes.map{|ss| ss.user.user_name}
     @ss=@ss.join(" ")
 
-
-
   end
 
 
@@ -313,6 +333,6 @@ class TopicsController < ApplicationController
   end
 
   def topic_params
-    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:tag_ids=>[],:picture_attributes => [:id, :title, :upload, :_destroy] )
+    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:tag_list,:tag_ids=>[],:picture_attributes => [:id, :title, :upload, :_destroy] )
   end
 end

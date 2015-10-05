@@ -13,55 +13,74 @@
   <tr>
     <td>討論話題</td>
     <td>分類</td>
+    <td>Tag</td>
     <td>參與討論用戶</td>
     <td>觀看</td>
     <td>回覆</td>
     <td>最後回覆時間</td>
     <td>最後回覆用戶</td>
+    <td>發帖人</td>
     <%if current_user != nil %>
-    <td>狀態</td>
-    <td>編輯</td>
-    <td>刪除</td>
+      <td>狀態</td>
+      <td>編輯</td>
+      <td>刪除</td>
     <%end%>
   </tr>
   <%@user.topics.each do |t|%>
-  <tr>
-    <td>
-      <%=link_to t.name, topic_path(t)%>
-    </td>
-    <td> <%=t.category.try(:name)%> </td>
-        <%topic_comment_users = t.comments.map{ |c| c.user.try(:user_name)}%>
-        <%topic_comment_users.uniq!%>
-    <td>
-        <%  topic_comment_users.each do |c| %>
-        <%= c %>
+    <tr>
+      <!-- 主題名稱 -->
+      <td><%=link_to t.name, topic_path(t,:page=>params[:page])%></td>
+      <!-- 類別 -->
+      <td><%=t.category.try(:name)%></td>
+      <!-- tag -->
+      <td>
+        <%t.tags.each do |tag|%>
+         <%=tag.name%>
         <%end%>
-    </td>
-    <td> <%=t.view%> </td>
-        <% t.most_comment = t.comments.count %>
-        <% t.last_comment = t.comments.last.try(:created_at) %>
-        <%t.save%>
-    <td> <%=t.most_comment%> </td>
-    <td> <%=t.last_comment%> </td>
-    <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
-    <%if current_user != nil %>
-          <td>
+      </td>
+      <!-- 參與討論用戶 -->
+          <%topic_comment_users = t.comments.map{ |c| c.user }%>
+          <%topic_comment_users.uniq!%>
+      <td>
+      <%  topic_comment_users.each do |c| %>
+      <%= link_to c.user_name, introduction_path(c) %>
+      <%end%>
+      </td>
+      <!-- 觀看次數 -->
+      <td> <%=t.view%> </td>
+      <!-- 最多回覆 -->
+      <%t.most_comment = t.comments.count%>
+      <td> <%=t.most_comment%> </td>
+      <!-- 最後回覆 -->
+      <%t.last_comment = t.comments.last.try(:created_at)%>
+      <td> <%=t.last_comment.try(:strftime, "%Y-%m-%d %T") %> </td>
+      <!-- 最後回覆用戶 -->
+      <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
+      <td>
+
+      <%=link_to introduction_path(t.user) do%>
+        <%=image_tag(Gravatar.new(t.user.email).image_url,:size => "15x15")%>
+        <%=t.user.try(:user_name)%>
+      <%end%>
+      </td>
+      <%if current_user != nil %>
+        <td>
+        <%if current_user == t.user || current_user.admin?%>
+          <%=t.state%>
+        <%end%>
+        </td>
+        <td>
           <%if current_user == t.user || current_user.admin?%>
-            <%=t.state%>
+            <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
           <%end%>
-          </td>
-          <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
-            <%end%>
-          </td>
-          <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
-            <%end%>
-          </td>
-        <%end%>
-  </tr>
+        </td>
+        <td>
+          <%if current_user == t.user || current_user.admin?%>
+            <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+          <%end%>
+        </td>
+      <%end%>
+    </tr>
   <%end%>
 </table>
 
@@ -103,56 +122,74 @@
   <tr>
     <td>討論話題</td>
     <td>分類</td>
+    <td>Tag</td>
     <td>參與討論用戶</td>
     <td>觀看</td>
     <td>回覆</td>
     <td>最後回覆時間</td>
     <td>最後回覆用戶</td>
+    <td>發帖人</td>
     <%if current_user != nil %>
-    <td>狀態</td>
-    <td>編輯</td>
-    <td>刪除</td>
+      <td>狀態</td>
+      <td>編輯</td>
+      <td>刪除</td>
     <%end%>
   </tr>
 
   <%@user.collects.each do |t|%>
   <tr>
-    <td>
-      <%=link_to t.try(:name), topic_path(t)%>
-    </td>
-    <td> <%=t.category.try(:name)%> </td>
-        <%topic_comment_users = t.comments.map{ |c| c.user.try(:user_name)}%>
-        <%topic_comment_users.uniq!%>
-    <td>
-        <%  topic_comment_users.each do |c| %>
-        <%= c %>
+      <!-- 主題名稱 -->
+      <td><%=link_to t.name, topic_path(t,:page=>params[:page])%></td>
+      <!-- 類別 -->
+      <td><%=t.category.try(:name)%></td>
+      <!-- tag -->
+      <td>
+        <%t.tags.each do |tag|%>
+         <%=tag.name%>
         <%end%>
-    </td>
-    <td> <%=t.view%> </td>
-        <% t.most_comment = t.comments.count %>
-        <% t.last_comment = t.comments.last.try(:created_at) %>
-        <%t.save%>
-    <td> <%=t.most_comment%> </td>
-    <td> <%=t.last_comment%> </td>
-    <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
-    <%if current_user != nil %>
-          <td>
+      </td>
+      <!-- 參與討論用戶 -->
+          <%topic_comment_users = t.comments.map{ |c| c.user }%>
+          <%topic_comment_users.uniq!%>
+      <td>
+      <%  topic_comment_users.each do |c| %>
+      <%= link_to c.user_name, introduction_path(c) %>
+      <%end%>
+      </td>
+      <!-- 觀看次數 -->
+      <td> <%=t.view%> </td>
+      <!-- 最多回覆 -->
+      <%t.most_comment = t.comments.count%>
+      <td> <%=t.most_comment%> </td>
+      <!-- 最後回覆 -->
+      <%t.last_comment = t.comments.last.try(:created_at)%>
+      <td> <%=t.last_comment.try(:strftime, "%Y-%m-%d %T") %> </td>
+      <!-- 最後回覆用戶 -->
+      <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
+      <td>
+
+      <%=link_to introduction_path(t.user) do%>
+        <%=image_tag(Gravatar.new(t.user.email).image_url,:size => "15x15")%>
+        <%=t.user.try(:user_name)%>
+      <%end%>
+      </td>
+      <%if current_user != nil %>
+        <td>
+        <%if current_user == t.user || current_user.admin?%>
+          <%=t.state%>
+        <%end%>
+        </td>
+        <td>
           <%if current_user == t.user || current_user.admin?%>
-            <%=t.state%>
+            <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
           <%end%>
-          </td>
-          <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
-            <%end%>
-          </td>
-          <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
-            <%end%>
-          </td>
-        <%end%>
-  </tr>
+        </td>
+        <td>
+          <%if current_user == t.user || current_user.admin?%>
+            <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+          <%end%>
+        </td>
+      <%end%>
   <%end%>
 </table>
 
@@ -163,55 +200,73 @@
   <tr>
     <td>討論話題</td>
     <td>分類</td>
+    <td>Tag</td>
     <td>參與討論用戶</td>
     <td>觀看</td>
     <td>回覆</td>
     <td>最後回覆時間</td>
     <td>最後回覆用戶</td>
+    <td>發帖人</td>
     <%if current_user != nil %>
-    <td>狀態</td>
-    <td>編輯</td>
-    <td>刪除</td>
+      <td>狀態</td>
+      <td>編輯</td>
+      <td>刪除</td>
     <%end%>
   </tr>
 
   <%@user.likess.each do |t|%>
   <tr>
-    <td>
-      <%=link_to t.try(:name), topic_path(t)%>
-    </td>
-    <td> <%=t.category.try(:name)%> </td>
-        <%topic_comment_users = t.comments.map{ |c| c.user.try(:user_name)}%>
-        <%topic_comment_users.uniq!%>
-    <td>
-        <%  topic_comment_users.each do |c| %>
-        <%= c %>
+      <!-- 主題名稱 -->
+      <td><%=link_to t.name, topic_path(t,:page=>params[:page])%></td>
+      <!-- 類別 -->
+      <td><%=t.category.try(:name)%></td>
+      <!-- tag -->
+      <td>
+        <%t.tags.each do |tag|%>
+         <%=tag.name%>
         <%end%>
-    </td>
-    <td> <%=t.view%> </td>
-        <% t.most_comment = t.comments.count %>
-        <% t.last_comment = t.comments.last.try(:created_at) %>
-        <%t.save%>
-    <td> <%=t.most_comment%> </td>
-    <td> <%=t.last_comment%> </td>
-    <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
-    <%if current_user != nil %>
-          <td>
+      </td>
+      <!-- 參與討論用戶 -->
+          <%topic_comment_users = t.comments.map{ |c| c.user }%>
+          <%topic_comment_users.uniq!%>
+      <td>
+      <%  topic_comment_users.each do |c| %>
+      <%= link_to c.user_name, introduction_path(c) %>
+      <%end%>
+      </td>
+      <!-- 觀看次數 -->
+      <td> <%=t.view%> </td>
+      <!-- 最多回覆 -->
+      <%t.most_comment = t.comments.count%>
+      <td> <%=t.most_comment%> </td>
+      <!-- 最後回覆 -->
+      <%t.last_comment = t.comments.last.try(:created_at)%>
+      <td> <%=t.last_comment.try(:strftime, "%Y-%m-%d %T") %> </td>
+      <!-- 最後回覆用戶 -->
+      <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
+      <td>
+
+      <%=link_to introduction_path(t.user) do%>
+        <%=image_tag(Gravatar.new(t.user.email).image_url,:size => "15x15")%>
+        <%=t.user.try(:user_name)%>
+      <%end%>
+      </td>
+      <%if current_user != nil %>
+        <td>
+        <%if current_user == t.user || current_user.admin?%>
+          <%=t.state%>
+        <%end%>
+        </td>
+        <td>
           <%if current_user == t.user || current_user.admin?%>
-            <%=t.state%>
+            <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
           <%end%>
-          </td>
-          <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
-            <%end%>
-          </td>
-          <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
-            <%end%>
-          </td>
-        <%end%>
-  </tr>
+        </td>
+        <td>
+          <%if current_user == t.user || current_user.admin?%>
+            <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+          <%end%>
+        </td>
+      <%end%>
   <%end%>
 </table>

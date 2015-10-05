@@ -1,32 +1,60 @@
 <h1>管理者介面</h1>
 
 
-<!-- 分類 -->
-<h2>目前分類</h2>
-  <%@categories.each do |c|%>
-  <div class="mar">
-    <%= link_to c.name, topics_path(:category => c),:class => "btn btn-info"%>
-    <%= link_to "<-刪除", admin_category_path(c), :method => :delete,:class => "btn btn-default"%>
-    <%= link_to "編輯", edit_admin_category_path(c),:class => "btn btn-default"%>
-  <%end%>
-  </div>
-<br>
-<br>
-<%= link_to "新增類別", new_admin_category_path, :class => "btn btn-success"%>
-<br>
+<!-- 類別＋標籤 -->
 
-<!-- 標籤 -->
-<h2>目前標籤</h2>
-<%@tags.each do |c|%>
-  <div class="mar">
-    <%= link_to c.name, topics_path(:tag => c),:class => "btn btn-info"%>
-    <%= link_to "<-刪除", admin_tag_path(c), :method => :delete,:class => "btn btn-default"%>
-    <%= link_to "編輯", edit_admin_tag_path(c),:class => "btn btn-default"%>
-  <%end%>
+<div class="container">
+  <div class= "row">
+      <div class="col-sm-6">
+      <%= link_to "新增類別", new_admin_category_path, :class => "btn btn-success"%>
+      <br>
+      <br>
+        <table class="table table-striped">
+          <tr class=" success">
+            <td>ID</td>
+            <td>類別</td>
+            <td>數量</td>
+            <td>編輯</td>
+            <td>刪除</td>
+          </tr>
+          <%@categories.each do |c|%>
+          <tr>
+            <td><%=c.id%></td>
+            <td><%=c.name%></td>
+            <td><%=c.topics.count%></td>
+            <td><%= link_to "編輯", edit_admin_category_path(c),:class => "btn btn-default"%></td>
+            <td><%= link_to "刪除", admin_category_path(c), :method => :delete,:class => "btn btn-default"%></td>
+          </tr>
+           <%end%>
+        </table>
+      </div>
+      <div class="col-sm-6">
+      <%= link_to "新增標籤", new_admin_tag_path, :class => "btn btn-success"%>
+      <br>
+      <br>
+        <table class="table table-striped">
+          <tr class="warning">
+            <td>ID</td>
+            <td>標籤</td>
+            <td>數量</td>
+            <td>編輯</td>
+            <td>刪除</td>
+          </tr>
+          <%@tags.each do |c|%>
+          <tr>
+            <td><%=c.id%></td>
+            <td><%=c.name%></td>
+            <td><%=c.topics.count%></td>
+            <td><%= link_to "編輯", edit_admin_category_path(c),:class => "btn btn-default"%></td>
+            <td><%= link_to "刪除", admin_category_path(c), :method => :delete,:class => "btn btn-default"%></td>
+          </tr>
+           <%end%>
+           <tr>
+           </tr>
+        </table>
+      </div>
   </div>
-<br>
-<br>
-<%= link_to "新增標籤", new_admin_tag_path, :class => "btn btn-success"%>
+</div>
 
 
 <h2>會員清單</h2>

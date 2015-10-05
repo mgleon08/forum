@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>健身論壇</title>
+  <title>健身論壇 Fitness Forum</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
@@ -18,39 +18,42 @@
 }(document, 'script', 'facebook-jssdk'));</script>
 
 <div class="container">
-      <% if current_user %>
-        <br/>
-        <%= link_to('回首頁', root_path) %> |
-        Hi,<%= current_user.user_name %>
-        <%=image_tag(Gravatar.new(current_user.email).image_url,:size => "20x20")%>
-        <%= link_to('登出', destroy_user_session_path, :method => :delete) %>
-        |
-        <%= link_to('修改密碼', edit_registration_path(:user)) %>
-        |
-        <%= link_to('個人簡介', introduction_path(current_user)) %>
-        <%if current_user.admin?%>
-        |
-        <%=link_to "管理者介面", admin_topics_path%>
-        <%end%>
-      <% else %>
-        <%= link_to('回首頁', root_path) %>
-        |
-        <%= link_to('註冊', new_registration_path(:user)) %>
-        |
-        <%= link_to('登入', new_session_path(:user)) %>
-        |
-        <%= link_to "Facebook",user_omniauth_authorize_path(:facebook) %>
-      <% end %>
-      <br/>
-      <%if flash[:notice].present?%>
-        <br/>
-        <div class="alert alert-success" role="alert"><%= flash[:notice] %></div>
-      <%end%>
-      <%if flash[:alert].present?%>
-        <br/>
-        <div class="alert alert-danger" role="alert"><%= flash[:alert] %></div>
-      <%end%>
-    <%= yield %>
+  <% if current_user %>
+    <br/>
+    <%= link_to('回首頁', root_path) %> |
+    Hi,<%= current_user.user_name %>
+    <%=image_tag(Gravatar.new(current_user.email).image_url,:size => "20x20")%>
+    <%= link_to('登出', destroy_user_session_path, :method => :delete) %>
+    |
+    <%= link_to('修改密碼', edit_registration_path(:user)) %>
+    |
+    <%= link_to('個人簡介', introduction_path(current_user)) %>
+    <%if current_user.admin?%>
+    |
+    <%=link_to "管理者介面", admin_topics_path%>
+    <%end%>
+  <% else %>
+    <%= link_to('回首頁', root_path) %>
+    |
+    <%= link_to('註冊', new_registration_path(:user)) %>
+    |
+    <%= link_to('登入', new_session_path(:user)) %>
+    |
+    <%= link_to "Facebook",user_omniauth_authorize_path(:facebook) %>
+  <% end %>
+  <br/>
+  <%if flash[:notice].present?%>
+    <br/>
+    <div class="alert alert-success" role="alert"><%= flash[:notice] %></div>
+  <%end%>
+  <%if flash[:alert].present?%>
+    <br/>
+    <div class="alert alert-danger" role="alert"><%= flash[:alert] %></div>
+  <%end%>
+
+  <h1><%=link_to "健身論壇 Fitness Forum", root_path%></h1>
+  <hr>
+ <%= yield %>
 </div>
 </body>
 </html>

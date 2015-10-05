@@ -16,25 +16,6 @@ class User < ActiveRecord::Base
 
   serialize :fb_raw_data
 
-  def get_fb_friendship
-    conn = Faraday.new(:url => 'https://graph.facebook.com')
-
-    res = conn.get '/v2.4/me/friends', { :access_token => self.fb_token }
-
-    JSON.parse( res.body )
-  end
-
-  def self.get_fb_data(access_token)
-    conn = Faraday.new(:url => 'https://graph.facebook.com')
-    res = conn.get '/v2.3/me', { :access_token => access_token }
-
-    if res.status == 200
-      JSON.parse( res.body )
-    else
-      Rails.logger.warn(res.body)
-      nil
-    end
-  end
 
   def self.from_omniauth(auth)
     # Case 1: Find existing user by facebook uid
@@ -68,14 +49,6 @@ class User < ActiveRecord::Base
     user.fb_raw_data = auth
     user.save!
     return user
-  end
-
-  def self.new_with_session(params, session)
-    super.tap do |user|
-      if data = session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
-        user.email = data["email"] if user.email.blank?
-      end
-    end
   end
 
   #def self.from_omniauth(auth)

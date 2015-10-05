@@ -1,5 +1,3 @@
-<h1><%=link_to "健身論壇", root_path%></h1>
-<hr>
   <div class="row">
     <div class="col-sm-12">
       <div>
@@ -58,13 +56,13 @@
 
   <div class="row">
     <div class="col-sm-12">
-      <%=link_to "按回覆排序", topics_path( :order => "most_comment", :category => params[:category]), :class => "btn btn-default" %>
+      <%=link_to "按回覆排序", topics_path( :order => "most_comment", :category => params[:category], :tag => params[:tag]), :class => "btn btn-default" %>
 
-      <%=link_to "按回覆時間排序", topics_path( :order => "last_comment", :category => params[:category]), :class => "btn btn-default" %>
+      <%=link_to "按回覆時間排序", topics_path( :order => "last_comment", :category => params[:category],:tag => params[:tag]), :class => "btn btn-default" %>
 
-      <%=link_to "按觀看人數排序", topics_path( :order => "view", :category => params[:category]), :class => "btn btn-default" %>
+      <%=link_to "按觀看人數排序", topics_path( :order => "view", :category => params[:category], :tag => params[:tag]), :class => "btn btn-default" %>
 
-      <%=link_to "按文章時間排序", topics_path( :order => "default", :category => params[:category]), :class => "btn btn-default" %>
+      <%=link_to "按文章時間排序", topics_path( :order => "default", :category => params[:category], :tag => params[:tag]), :class => "btn btn-default" %>
 
       <%if current_user != nil %>
         <%=link_to "找自己的話題", topics_path(:user => current_user ), :class => "btn btn-default" %>
@@ -111,32 +109,44 @@
         <%end%>
         </td>
         <%end%>
+        <!-- 主題名稱 -->
         <td>
         <%=link_to t.name, topic_path(t,:page=>params[:page])%>
         </td>
-        <td> <%=t.category.try(:name)%> </td>
+        <!-- 類別 -->
+        <td>
+        <%=t.category.try(:name)%>
+        </td>
+        <!-- tag -->
         <td>
           <%t.tags.each do |tag|%>
            <%=tag.name%>
           <%end%>
         </td>
+        <!-- 參與討論用戶 -->
             <%topic_comment_users = t.comments.map{ |c| c.user }%>
             <%topic_comment_users.uniq!%>
         <td>
         <%  topic_comment_users.each do |c| %>
-        <%= link_to c.user_name, introduction_path(c) %>
+          <%= link_to introduction_path(c), :id => "pic" do%>
+          <%=image_tag(Gravatar.new(c.email).image_url,:size => "15x15")%>
+          <%= c.user_name%>
+          <%end%>
         <%end%>
         </td>
-
+        <!-- 觀看次數 -->
         <td> <%=t.view%> </td>
+        <!-- 最多回覆 -->
         <%t.most_comment = t.comments.count%>
         <td> <%=t.most_comment%> </td>
+        <!-- 最後回覆 -->
         <%t.last_comment = t.comments.last.try(:created_at)%>
         <td> <%=t.last_comment.try(:strftime, "%Y-%m-%d %T") %> </td>
+        <!-- 最後回覆用戶 -->
         <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
         <td>
-
-        <%=link_to introduction_path(t.user) do%>
+        <!-- 發帖人 -->
+        <%=link_to introduction_path(t.user), :id => "pic" do%>
           <%=image_tag(Gravatar.new(t.user.email).image_url,:size => "15x15")%>
           <%=t.user.try(:user_name)%>
         <%end%>

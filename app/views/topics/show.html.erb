@@ -1,7 +1,7 @@
 <h1><%=@topic.name%>  <span class="fb-like"></span></h1>
 <p><%=@topic.article%></p>
 <%if @topic.picture.try(:upload) != nil%>
-<div><%=image_tag(@topic.picture.upload.url(:medium), alt: "article_p")%></div>
+<div><%=link_to image_tag(@topic.picture.upload.url(:medium)), @topic.picture.upload.url%></div>
 <br>
 <%end%>
 
@@ -38,13 +38,13 @@
 
 
 <%=link_to collect_topic_path(@topic,:page=>params[:page]), :class => "btn #{@is_collect} ", remote: true, :id => "col" do%>
-<span id="col-name"><%=@is_collect_name%></span>
-<span class="badge" id="col-number"><%=@topic.topic_user_collects.count%></span>
+  <span id="col-name"><%=@is_collect_name%></span>
+  <span class="badge" id="col-number"><%=@topic.topic_user_collects.count%></span>
 <%end%>
 
 <%=link_to like_topic_path(@topic,:page=>params[:page]), :class => "btn #{@is_like}", remote: true, :id => "lik" do%>
- <span id="lik-name"><%=@is_like_name%></span>
- <span class="badge" id="lik-number"><%=@topic.likes.count%></span>
+  <span id="lik-name"><%=@is_like_name%></span>
+  <span class="badge" id="lik-number"><%=@topic.likes.count%></span>
 <%end%>
 
 <%=link_to subscribe_topic_path(@topic,:page=>params[:page]), :class => "btn #{@is_subscribe}", remote: true, :id => "sub" do%>

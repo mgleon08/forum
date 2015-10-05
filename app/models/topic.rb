@@ -11,4 +11,22 @@ class Topic < ActiveRecord::Base
   has_many :topic_tag_ships
   has_many :tags, :through => :topic_tag_ships
   accepts_nested_attributes_for :picture, :allow_destroy => true, :reject_if => :all_blank
+
+  def tag_list
+    self.tags.map{ |t| t.name }.join(",")
+  end
+
+  def tag_list=(str)
+    arr = str.split(",")
+
+    self.tags = arr.map do |t|
+      tag = Tag.find_by_name(t)
+      unless tag
+        tag = Tag.create!( :name => t )
+      end
+        tag
+    end
+
+  end
+
 end

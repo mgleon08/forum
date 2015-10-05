@@ -10,8 +10,8 @@
 </div>
 
 <div class="form-group">
-<%= t.label :state, "Tag:"%>
-<%= t.collection_check_boxes(:tag_ids, Tag.all, :id, :name) %>
+<%= t.label :tag_list, "加入標籤(請用,來分開)"%>
+<%= t.text_field :tag_list, :class => "form-control" %>
 </div>
 
 <div class="form-group">
