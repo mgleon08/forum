@@ -8,9 +8,11 @@ class Topic < ActiveRecord::Base
   has_many :likes
   has_many :subscribes
   has_one :picture, dependent: :destroy
+  has_many :mpictures, dependent: :destroy
   has_many :topic_tag_ships
   has_many :tags, :through => :topic_tag_ships
   accepts_nested_attributes_for :picture, :allow_destroy => true, :reject_if => :all_blank
+  accepts_nested_attributes_for :mpictures, :allow_destroy => true, :reject_if => :all_blank
 
   def tag_list
     self.tags.map{ |t| t.name }.join(",")

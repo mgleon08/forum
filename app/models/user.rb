@@ -60,7 +60,6 @@ class User < ActiveRecord::Base
     #end
   #end
 
-
   def admin?
     self.role == "admin"
   end

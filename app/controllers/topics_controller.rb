@@ -49,11 +49,9 @@ class TopicsController < ApplicationController
         @cc=@cc.join("")
       end
 
-
-
     respond_to do |format|
       format.html {
-        redirect_to topic_path(:id => @topic)
+        redirect_to :back
      }
       format.js
     end
@@ -90,7 +88,7 @@ class TopicsController < ApplicationController
 
     respond_to do |format|
       format.html {
-        redirect_to topic_path(:id => @topic)
+        redirect_to :back
       }
       format.js
     end
@@ -128,7 +126,7 @@ class TopicsController < ApplicationController
 
     respond_to do |format|
       format.html {
-        redirect_to topic_path(:id => @topic)
+        redirect_to :back
       }
       format.js
     end
@@ -142,55 +140,70 @@ class TopicsController < ApplicationController
     @categories = Category.all
     @tags = Tag.all
 
-    #判斷是否為會員＆管理員＄一般人，撈出相對應的資料，再進行排序的動作
-    if current_user && current_user.role == "admin"
-      @topics = Topic.all
-    elsif current_user
-      @topics = Topic.where( ["state = ? OR ( state = ? AND user_id = ?) ", "發布", "草稿", current_user.id ])
-    else
-      @topics = Topic.where( :state => "發布" )
-    end
 
-    #排序，先看有沒有類別，在排序，一對多
     if params[:category]
-
-      if params[:order] == "most_comment"
-        @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
-      elsif params[:order] == "last_comment"
-        @topics = @topics.order("last_comment DESC").where(:category_id => params[:category])
-      elsif params[:order] == "view"
-        @topics = @topics.order("view DESC").where(:category_id => params[:category])
-      else
-        @topics = @topics.order("id DESC").where(:category_id => params[:category])
-      end
-
+      @category = Category.find(params[:category])
+      @topics = current_user.try(:admin?) ? @category.topics : @category.topics.where(state: "發布")
     elsif params[:tag]
-
       @tag = Tag.find(params[:tag])
-      if params[:order] == "most_comment"
-        @topics = @tag.topics.order("most_comment DESC")
-      elsif params[:order] == "last_comment"
-        @topics = @tag.topics.order("last_comment DESC")
-      elsif params[:order] == "view"
-        @topics = @tag.topics.order("view DESC")
-      else
-        @topics = @tag.topics.order("id DESC")
-      end
-
+      @topics = current_user.try(:admin?) ? @tag.topics : @tag.topics.where(state: "發布")
     else
-
-      if params[:order] == "most_comment"
-        @topics = @topics.order("most_comment DESC")
-      elsif params[:order] == "last_comment"
-        @topics = @topics.order("last_comment DESC")
-      elsif params[:order] == "view"
-        @topics = @topics.order("view DESC")
-      else
-        @topics = @topics.order("id DESC")
-      end
+      @topics = current_user.try(:admin?) ? Topic.all : Topic.where(state: '發布')
     end
 
-    #標籤分類，多對多
+    if params[:order]
+      @topics = @topics.order("#{params[:order]} DESC").page(params[:page]).per(10)
+    else
+      @topics = @topics.order("id DESC").page(params[:page]).per(10)
+    end
+
+    # #判斷是否為會員＆管理員＄一般人，撈出相對應的資料，再進行排序的動作
+    # if current_user && current_user.role == "admin"
+    #   @topics = Topic.all
+    # elsif current_user
+    #   @topics = Topic.where( ["state = ? OR ( state = ? AND user_id = ?) ", "發布", "草稿", current_user.id ])
+    # else
+    #   @topics = Topic.where( :state => "發布" )
+    # end
+
+    # #排序，先看有沒有類別，在排序，一對多
+    # if params[:category]
+
+    #   if params[:order] == "most_comment"
+    #     @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
+    #   elsif params[:order] == "last_comment"
+    #     @topics = @topics.order("last_comment DESC").where(:category_id => params[:category])
+    #   elsif params[:order] == "view"
+    #     @topics = @topics.order("view DESC").where(:category_id => params[:category])
+    #   else
+    #     @topics = @topics.order("id DESC").where(:category_id => params[:category])
+    #   end
+
+    # elsif params[:tag]
+
+    #   @tag = Tag.find(params[:tag])
+    #   if params[:order] == "most_comment"
+    #     @topics = @tag.topics.order("most_comment DESC")
+    #   elsif params[:order] == "last_comment"
+    #     @topics = @tag.topics.order("last_comment DESC")
+    #   elsif params[:order] == "view"
+    #     @topics = @tag.topics.order("view DESC")
+    #   else
+    #     @topics = @tag.topics.order("id DESC")
+    #   end
+
+    # else
+
+    #   if params[:order] == "most_comment"
+    #     @topics = @topics.order("most_comment DESC")
+    #   elsif params[:order] == "last_comment"
+    #     @topics = @topics.order("last_comment DESC")
+    #   elsif params[:order] == "view"
+    #     @topics = @topics.order("view DESC")
+    #   else
+    #     @topics = @topics.order("id DESC")
+    #   end
+    # end
 
 
     #找自己話題
@@ -204,7 +217,7 @@ class TopicsController < ApplicationController
     end
 
       @topics = @topics.page(params[:page]).per(10)
-  end
+    end
 
   def new
     @topic = Topic.new
@@ -333,6 +346,6 @@ class TopicsController < ApplicationController
   end
 
   def topic_params
-    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:tag_list,:tag_ids=>[],:picture_attributes => [:id, :title, :upload, :_destroy] )
+    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:tag_list,:tag_ids=>[], :mpictures_attributes => [:id, :title, :upload, :_destroy],:picture_attributes => [:id, :title, :upload, :_destroy] )
   end
 end

@@ -5,12 +5,12 @@
 
   <div class="field">
     <%= f.label :user_name, "姓名" %><br />
-    <%= f.text_field :user_name%>
+    <%= f.text_field :user_name, :class => "form-control"%>
   </div>
 
   <div class="field">
     <%= f.label :email, "信箱" %><br />
-    <%= f.email_field :email, autofocus: true %>
+    <%= f.email_field :email, autofocus: true, :class => "form-control" %>
   </div>
 
   <div class="field">
@@ -18,16 +18,16 @@
     <% if @minimum_password_length %>
     <em>(最少<%= @minimum_password_length %>個字)</em>
     <% end %><br />
-    <%= f.password_field :password, autocomplete: "off" %>
+    <%= f.password_field :password, autocomplete: "off" , :class => "form-control"%>
   </div>
 
   <div class="field">
     <%= f.label :password_confirmation, "確認密碼" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+    <%= f.password_field :password_confirmation, autocomplete: "off", :class => "form-control" %>
   </div>
-
+<br>
   <div class="actions">
-    <%= f.submit "註冊" %>
+    <%= f.submit "註冊" , :class => "btn btn-default"%>
   </div>
 <% end %>
 

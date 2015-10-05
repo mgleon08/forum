@@ -22,6 +22,7 @@ class IntroductionsController < ApplicationController
     end
   end
 
+
   protected
 
   def intro_params

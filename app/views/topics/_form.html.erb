@@ -1,3 +1,14 @@
+<% if @topic.errors.any? %>
+<div id="error_explanation">
+  <h2><%= pluralize(@topic.errors.count, "error") %> prohibited this topic from being saved:</h2>
+
+  <ul>
+  <% @topic.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+  <% end %>
+  </ul>
+</div>
+<%end%>
 
 <div class="form-group">
   <%= t.label :name, "標題:"%>
@@ -8,6 +19,14 @@
   <%= t.label :category_id, "文章類別:"%>
   <%= t.collection_select :category_id, Category.all, :id, :name, {}, :class => "form-control"%>
 </div>
+
+
+<div>目前全站有的標籤：
+<%Tag.all.each do |t|%>
+<%=t.name%>
+<%end%>
+</div>
+<br>
 
 <div class="form-group">
 <%= t.label :tag_list, "加入標籤(請用,來分開)"%>
@@ -25,18 +44,29 @@
 <%= t.radio_button :state,"草稿"%> <%="草稿"%>
 </div>
 
+
+<!-- 一對一，存取在不同的model -->
 <%= t.fields_for :picture do |picture_form| %>
 
   <div class="form-group">
     <%= picture_form.label :upload, "上傳檔案:" %>
     <%= picture_form.file_field :upload %>
   </div>
+
   <% unless picture_form.object.new_record? %>
     <div class="form-group">
         <%= picture_form.label :_destroy, 'Remove:' %>
         <%= picture_form.check_box :_destroy %>
     </div>
+  <% end %>
+<% end %>
 
+<!-- 多對多，可以上傳多張圖片 -->
+<%= t.nested_fields_for :mpictures do |mp| %>
+  <div class="form-group">
+    <%= mp.file_field :upload%>
+    <%= mp.remove_nested_fields_link 'Remove me'%>
+  </div>
 <% end %>
-</p>
-<% end %>
+<%=t.add_nested_fields_link :mpictures, '增加照片'%>
+<br>

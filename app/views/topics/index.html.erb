@@ -62,7 +62,7 @@
 
       <%=link_to "按觀看人數排序", topics_path( :order => "view", :category => params[:category], :tag => params[:tag]), :class => "btn btn-default" %>
 
-      <%=link_to "按文章時間排序", topics_path( :order => "default", :category => params[:category], :tag => params[:tag]), :class => "btn btn-default" %>
+      <%=link_to "按文章時間排序", topics_path( :order => "id", :category => params[:category], :tag => params[:tag]), :class => "btn btn-default" %>
 
       <%if current_user != nil %>
         <%=link_to "找自己的話題", topics_path(:user => current_user ), :class => "btn btn-default" %>
@@ -75,11 +75,11 @@
 <%= form_tag bulk_delete_topics_path do %>
 
 <table class="table table-striped">
-  <tr id="all_topics" >
+  <tr>
     <%if current_user != nil %>
         <%if current_user.role == "admin" %>
       <td>
-          <%= check_box_tag "ids[]", "1", false%>
+          <%= check_box_tag "all_topics" %>
         <%end%>
       </td>
     <%end%>
@@ -146,7 +146,7 @@
         <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
         <td>
         <!-- 發帖人 -->
-        <%=link_to introduction_path(t.user), :id => "pic" do%>
+        <%=link_to introduction_path(t.user.id), :id => "pic" do%>
           <%=image_tag(Gravatar.new(t.user.email).image_url,:size => "15x15")%>
           <%=t.user.try(:user_name)%>
         <%end%>

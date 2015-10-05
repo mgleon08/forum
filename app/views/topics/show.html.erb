@@ -1,9 +1,18 @@
 <h1><%=@topic.name%>  <span class="fb-like"></span></h1>
-<p><%=@topic.article%></p>
-<%if @topic.picture.try(:upload) != nil%>
-<div><%=link_to image_tag(@topic.picture.upload.url(:medium)), @topic.picture.upload.url%></div>
-<br>
-<%end%>
+  <p><%=@topic.article%></p>
+    <%if @topic.picture.present? %>
+  <div>
+    <%=link_to image_tag(@topic.picture.upload.url(:medium)), @topic.picture.upload.url%>
+  </div>
+  <%end%>
+  <%if @topic.mpictures.present?%>
+    <%@topic.mpictures.each do |mp|%>
+      <div>
+        <%=link_to image_tag(mp.upload.url(:medium)), mp.upload.url%>
+      </div>
+      <br>
+    <%end%>
+  <%end%>
 
 <div class="panel panel-warning">
   <div class="panel-heading">

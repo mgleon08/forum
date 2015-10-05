@@ -20,6 +20,7 @@ gem 'bootstrap-kaminari-views'
 gem 'devise'
 gem 'omniauth-facebook'
 gem "paperclip"
+gem 'nested_form_fields'
 
 gem 'gravatar-ultimate'
 # Use jquery as the JavaScript library

@@ -45,8 +45,8 @@
             <td><%=c.id%></td>
             <td><%=c.name%></td>
             <td><%=c.topics.count%></td>
-            <td><%= link_to "編輯", edit_admin_category_path(c),:class => "btn btn-default"%></td>
-            <td><%= link_to "刪除", admin_category_path(c), :method => :delete,:class => "btn btn-default"%></td>
+            <td><%= link_to "編輯", edit_admin_tag_path(c),:class => "btn btn-default"%></td>
+            <td><%= link_to "刪除", admin_tag_path(c), :method => :delete,:class => "btn btn-default"%></td>
           </tr>
            <%end%>
            <tr>
@@ -59,7 +59,8 @@
 
 <h2>會員清單</h2>
 <table class="table table-striped">
-  <tr>
+  <tr class="danger">
+    <td>ID</td>
     <td>名稱</td>
     <td>信箱</td>
     <td>個人簡介</td>
@@ -68,6 +69,7 @@
   </tr>
   <%@users.each do |u|%>
   <tr>
+    <td><%=u.id%></td>
     <td><%=u.user_name%></td>
     <td><%=u.email%></td>
     <td><%=u.introduction.try(:pro)%></td>

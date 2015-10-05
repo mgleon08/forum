@@ -186,7 +186,7 @@
         </td>
         <td>
           <%if current_user == t.user || current_user.admin?%>
-            <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+            <%=link_to "刪除", collect_topic_path(t,:page=>params[:page]), :class => "btn btn-danger" %>
           <%end%>
         </td>
       <%end%>
@@ -264,7 +264,7 @@
         </td>
         <td>
           <%if current_user == t.user || current_user.admin?%>
-            <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
+            <%=link_to "刪除", like_topic_path(t,:page=>params[:page]), :class => "btn btn-danger" %>
           <%end%>
         </td>
       <%end%>
