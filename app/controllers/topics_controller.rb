@@ -17,6 +17,7 @@ class TopicsController < ApplicationController
      topics.each{ |t| t.destroy }
     end
     redirect_to root_path
+    byebug
   end
 
   def collect
@@ -34,79 +35,33 @@ class TopicsController < ApplicationController
     end
   end
 
-  # TODO: refactor
-  #like,model設定跟收藏不一樣所以是l.topic_id
   def like
     @topic = Topic.find(params[:id])
-    have = true
 
-    @is_like = "btn-default"
-    @is_like2 = "btn-info"
-    @is_like_name = "Like"
-
-    if current_user != nil
-      current_user.likes.each do |l|
-          if l.topic_id == @topic.id
-            have = false
-            @is_like = "btn-info"
-            @is_like2 = "btn-default"
-            @is_like_name = "Un-Like"
-            Like.find_by(:topic=>@topic,:user=>current_user).destroy
-            @ll=@topic.likes.map{|ll| ll.user.user_name}
-            @ll=@ll.join(" ")
-          end
-      end
-    end
-
-    if have
+    if current_user.is_like?(@topic)
+      Like.find_by(:topic=>@topic,:user=>current_user).destroy
+    else
       Like.create(:topic=>@topic,:user=>current_user)
-      @ll=@topic.likes.map{|ll| ll.user.user_name}
-      @ll=@ll.join(" ")
     end
 
     respond_to do |format|
-      format.html {
-        redirect_to :back
-      }
+      format.html { redirect_to :back }
       format.js
     end
 
   end
 
-  # TODO: refactor
-  #訂閱
   def subscribe
    @topic = Topic.find(params[:id])
-    have = true
 
-    @is_subscribe = "btn-default"
-    @is_subscribe2 = "btn-success"
-    @is_subscribe_name = "已訂閱"
-
-    if current_user != nil
-      current_user.subscribes.each do |s|
-          if s.topic_id == @topic.id
-            have = false
-            @is_subscribe = "btn-success"
-            @is_subscribe2 = "btn-default"
-            @is_subscribe_name = "未訂閱"
-            Subscribe.find_by(:topic=>@topic,:user=>current_user).destroy
-            @ss=@topic.subscribes.map{|ss| ss.user.user_name}
-            @ss=@ss.join(" ")
-          end
-      end
-    end
-
-    if have
-     Subscribe.create(:topic=>@topic,:user=>current_user)
-     @ss=@topic.subscribes.map{|ss| ss.user.user_name}
-     @ss=@ss.join(" ")
+    if current_user.is_subscribe?(@topic)
+      Subscribe.find_by(:topic=>@topic,:user=>current_user).destroy
+    else
+      Subscribe.create(:topic=>@topic,:user=>current_user)
     end
 
     respond_to do |format|
-      format.html {
-        redirect_to :back
-      }
+      format.html {redirect_to :back}
       format.js
     end
 
@@ -184,45 +139,11 @@ class TopicsController < ApplicationController
   def show
     @comment = Comment.new
 
+    # cookies紀錄
     unless cookies["view-topic-#{@topic.id}"]
       @topic.increment!(:view)
       cookies["view-topic-#{@topic.id}"] = true
     end
-
-    # TODO: refactor
-    @is_like = "btn-default"
-    @is_like_name = "un-like"
-
-    if current_user
-      current_user.likes.each do |l|
-          if l.topic_id == @topic.id
-            @is_like = "btn-info"
-            @is_like_name = "like"
-          end
-      end
-    end
-
-    # like的人名
-    @ll=@topic.likes.map{|ll| ll.user.user_name}
-    @ll=@ll.join(" ")
-
-
-    # TODO: refactor
-    @is_subscribe = "btn-default"
-    @is_subscribe_name = "未訂閱"
-
-    if current_user != nil
-      current_user.subscribes.each do |s|
-          if s.topic_id == @topic.id
-            @is_subscribe = "btn-success"
-            @is_subscribe_name = "訂閱"
-          end
-      end
-    end
-
-    # subscribe的人名
-    @ss=@topic.subscribes.map{|ss| ss.user.user_name}
-    @ss=@ss.join(" ")
 
   end
 

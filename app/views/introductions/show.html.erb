@@ -211,7 +211,7 @@
     <%end%>
   </tr>
 
-  <%@user.likess.each do |t|%>
+  <%@user.like_topics.each do |t|%>
   <tr>
       <!-- 主題名稱 -->
       <td><%=link_to t.name, topic_path(t,:page=>params[:page])%></td>

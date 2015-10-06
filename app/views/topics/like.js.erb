@@ -1,9 +1,12 @@
-$(document).ready(function() {
-  $("#lik").toggleClass("<%=@is_like%>")
-  $("#lik").toggleClass("<%=@is_like2%>")
-  $("#lik-name").text("<%=@is_like_name%>");
-  $("#lik-number").text(<%=@topic.likes.count%>);
-  $("#ll").text("<%=@ll%>");
-});
+$("#lik").toggleClass("btn-default")
+$("#lik").toggleClass("btn-info")
+
+$("#lik-name").text("<%=is_topic_like_name(@topic)%>");
+$("#ll").text("<%=topic_like_user_name(@topic)%>");
+
+$("#lik-number").text(<%=@topic.likes.count%>);
+
+
+
 
 

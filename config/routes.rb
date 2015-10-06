@@ -15,9 +15,9 @@ Rails.application.routes.draw do
       end
 
       member do
-        get :collect   # TODO: change to post
-        get :like      # TODO: change to post
-        get :subscribe # TODO: change to post
+        post :collect   # TODO: change to post OK
+        post :like      # TODO: change to post OK
+        post :subscribe # TODO: change to post OK
       end
   end
 

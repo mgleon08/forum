@@ -2,7 +2,7 @@ class IntroductionsController < ApplicationController
 
   def show
     if params[:id]
-      @user = User.find(params[:id])
+      @user = User.find_by_user_name(params[:id])
     else
       @user = current_user
     end
@@ -26,11 +26,9 @@ class IntroductionsController < ApplicationController
     end
   end
 
-
   protected
 
   def intro_params
     params.require(:introduction).permit(:pro)
   end
-
 end

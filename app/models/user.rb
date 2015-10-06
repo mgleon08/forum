@@ -13,20 +13,32 @@ class User < ActiveRecord::Base
 
 
   has_many :likes
-  has_many :likess , :through => :likes, :source => :topic # TODO: rename to like_topics
+  has_many :like_topics , :through => :likes, :source => :topic # TODO: rename to like_topics
+
 
   has_many :subscribes
+  has_many :subscribe_topics , :through => :subscribes, :source => :topic
 
   has_one :introduction
 
-  serialize :fb_raw_data
-
   def to_param
-    "#{id}-#{user_name}"
+    "#{user_name}"
+  end
+
+  def admin?
+    self.role == "admin"
   end
 
   def is_collect?(topic)
-     collect_topics.include?(topic)
+    self.collect_topics.include?(topic)
+  end
+
+  def is_like?(topic)
+    self.like_topics.include?(topic)
+  end
+
+  def is_subscribe?(topic)
+    self.subscribe_topics.include?(topic)
   end
 
   def self.from_omniauth(auth)
@@ -61,10 +73,6 @@ class User < ActiveRecord::Base
     user.fb_raw_data = auth
     user.save!
     return user
-  end
-
-  def admin?
-    self.role == "admin"
   end
 
 end

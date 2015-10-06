@@ -17,7 +17,7 @@
         <% @categories.each do |c| %>
           <% is_active = ( c.id.to_s == params[:category] )? " btn-warning" : " btn-info" %>
 
-          <%= link_to topics_path(:category => c), :class => "btn category_color #{is_active}" do %>
+          <%= link_to topics_path(:category => c), :class => "btn #{is_active}" do %>
               <%=  c.name %>
               <span class="badge"><%=c.topics.count%></span>
           <% end %>
@@ -43,7 +43,7 @@
         <% @tags.each do |c| %>
           <% is_active = ( c.id.to_s == params[:tag] )? " btn-warning" : " btn-danger" %>
 
-          <%= link_to topics_path(:tag => c), :class => "btn category_color #{is_active}" do %>
+          <%= link_to topics_path(:tag => c), :class => "btn #{is_active}" do %>
               <%=  c.name %>
               <span class="badge"><%=c.topics.count%></span>
           <% end %>
@@ -92,7 +92,7 @@
     <td>最後回覆時間</td>
     <td>最後回覆用戶</td>
     <td>發帖人</td>
-    <%if current_user != nil %>
+    <%if current_user %>
       <td>狀態</td>
       <td>編輯</td>
       <td>刪除</td>
@@ -143,9 +143,9 @@
         <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>
         <td>
         <!-- 發帖人 -->
-        <%=link_to introduction_path(t.user.id), :id => "pic" do%>
-          <%=image_tag(Gravatar.new(t.user.email).image_url,:size => "15x15")%>
-          <%=t.user.try(:user_name)%>
+        <%=link_to introduction_path(t.user), :id => "pic" do%>
+          <%=image_tag(avatar(t.user),:size => "15x15")%>
+          <%=t.user.user_name%>
         <%end%>
         </td>
 
@@ -174,10 +174,8 @@
 <script>
 $("#all_topics").click(function(){
   if ( $(this).prop("checked")) {
-     console.log("11111")
     $("input[name='ids[]']").prop("checked",true)
   } else {
-    console.log("dsdf")
     $("input[name='ids[]']").prop("checked",false)
   }
 });

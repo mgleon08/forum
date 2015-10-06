@@ -28,7 +28,7 @@
     <h3 class="panel-title">誰有like這篇文章？</h3>
   </div>
   <div class="panel-body" id="ll">
-    <%=@ll%>
+    <%= topic_like_user_name(@topic) %>
   </div>
 </div>
 
@@ -38,7 +38,7 @@
     <h3 class="panel-title">誰有訂閱這篇文章？</h3>
   </div>
   <div class="panel-body" id="ss">
-    <%=@ss%>
+    <%= topic_subscribe_user_name(@topic) %>
   </div>
 </div>
 <br>
@@ -46,18 +46,18 @@
 <%=link_to "回首頁", root_path(:page=>params[:page]), :class => "btn btn-primary"%>
 
 
-<%=link_to collect_topic_path(@topic,:page=>params[:page]), :class => "btn #{is_topic_collect_class(@topic)} ", remote: true, :id => "col" do%>
+<%=link_to collect_topic_path(@topic,:page=>params[:page]), :method=>:post, :class => "btn #{is_topic_collect_class(@topic)} ", remote: true, :id => "col" do%>
   <span id="col-name"><%= is_topic_collect_name(@topic) %></span>
   <span class="badge" id="col-number"><%=@topic.topic_user_collects.count%></span>
 <%end%>
 
-<%=link_to like_topic_path(@topic,:page=>params[:page]), :class => "btn #{@is_like}", remote: true, :id => "lik" do%>
-  <span id="lik-name"><%=@is_like_name%></span>
+<%=link_to like_topic_path(@topic,:page=>params[:page]), :method=>:post, :class => "btn #{is_topic_like_class(@topic)}", remote: true, :id => "lik" do%>
+  <span id="lik-name"><%=is_topic_like_name(@topic)%></span>
   <span class="badge" id="lik-number"><%=@topic.likes.count%></span>
 <%end%>
 
-<%=link_to subscribe_topic_path(@topic,:page=>params[:page]), :class => "btn #{@is_subscribe}", remote: true, :id => "sub" do%>
- <span id="sub-name"><%=@is_subscribe_name%></span>
+<%=link_to subscribe_topic_path(@topic,:page=>params[:page]), :method=>:post, :class => "btn  #{is_topic_subscribe_class(@topic)}", remote: true, :id => "sub" do%>
+ <span id="sub-name"><%=is_topic_subscribe_name(@topic)%></span>
 <span class="badge" id="sub-number"><%=@topic.subscribes.count%></span>
 <%end%>
 

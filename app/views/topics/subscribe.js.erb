@@ -1,9 +1,6 @@
-$(document).ready(function() {
-  $("#sub").toggleClass("<%=@is_subscribe%>")
-  $("#sub").toggleClass("<%=@is_subscribe2%>")
-  $("#sub-name").text("<%=@is_subscribe_name%>");
-  $("#sub-number").text(<%=@topic.subscribes.count%>);
-  $("#ss").text("<%=@ss%>");
-});
+$("#sub").toggleClass("btn-default")
+$("#sub").toggleClass("btn-success")
+$("#sub-name").text("<%=is_topic_subscribe_name(@topic)%>");
+$("#ss").text("<%=topic_subscribe_user_name(@topic)%>");
 
-
+$("#sub-number").text(<%=@topic.subscribes.count%>);

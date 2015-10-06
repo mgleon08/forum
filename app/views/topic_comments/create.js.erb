@@ -1,12 +1,4 @@
-<% if @comment.persisted? %>
-
-  $(".post_content").val("");
-  $(".post_picture").val("");
-  $("#user_message").append("<%=j render @comment%>");
-  $("#comment<%=@comment.id%>").hide().fadeIn(1000);
-
-<% else %>
-
-  alert("fail!");
-
-<% end %>
+$(".post_content").val("");
+$(".post_picture").val("");
+$("#user_message").append("<%=j render @comment%>");
+$("#comment<%=@comment.id%>").hide().fadeIn(1000);
