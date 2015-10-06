@@ -1,8 +1,7 @@
 class TopicsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show, :about]
-  before_action :set_show, only: [:show]
-  before_action :set_post, only: [:edit, :update, :destroy]
-
+  before_action :set_post, only: [:show]
+  before_action :set_my_post, only: [:edit, :update, :destroy]
 
   def about
     @topics = Topic.all
@@ -20,44 +19,23 @@ class TopicsController < ApplicationController
     redirect_to root_path
   end
 
-#收藏
   def collect
     @topic = Topic.find(params[:id])
-    have = true
 
-    @is_collect = "btn-default"
-    @is_collect2 = "btn-warning"
-    @is_collect_name = "已收藏"
-
-    if current_user != nil
-      current_user.collects.each do |c|
-          if c.id == @topic.id
-            have = false
-            @is_collect = "btn-warning"
-            @is_collect2 = "btn-default"
-            @is_collect_name = "未收藏"
-            TopicUserCollect.find_by(:topic => @topic,:user=>current_user).destroy
-            @cc=@topic.collects.map{|cc| cc.user_name}
-            @cc=@cc.join(" ")
-          end
-      end
+    if current_user.is_collect?(@topic)
+      TopicUserCollect.find_by(:topic => @topic,:user=>current_user).destroy
+    else
+      TopicUserCollect.create(:topic => @topic, :user=>current_user)
     end
 
-      if have
-        TopicUserCollect.create(:topic => @topic,:user=>current_user)
-        @cc=@topic.collects.map{|cc| cc.user_name}
-        @cc=@cc.join("")
-      end
-
     respond_to do |format|
-      format.html {
-        redirect_to :back
-     }
+      format.html { redirect_to :back }
       format.js
     end
   end
 
-#like,model設定跟收藏不一樣所以是l.topic_id
+  # TODO: refactor
+  #like,model設定跟收藏不一樣所以是l.topic_id
   def like
     @topic = Topic.find(params[:id])
     have = true
@@ -95,7 +73,8 @@ class TopicsController < ApplicationController
 
   end
 
-#訂閱
+  # TODO: refactor
+  #訂閱
   def subscribe
    @topic = Topic.find(params[:id])
     have = true
@@ -135,76 +114,28 @@ class TopicsController < ApplicationController
 
 
   def index
-
-    @user = current_user
     @categories = Category.all
     @tags = Tag.all
 
-
     if params[:category]
       @category = Category.find(params[:category])
-      @topics = current_user.try(:admin?) ? @category.topics : @category.topics.where(state: "發布")
+      @topics = @category.topics
     elsif params[:tag]
       @tag = Tag.find(params[:tag])
-      @topics = current_user.try(:admin?) ? @tag.topics : @tag.topics.where(state: "發布")
+      @topics = @tag.topics
     else
-      @topics = current_user.try(:admin?) ? Topic.all : Topic.where(state: '發布')
+      @topics = Topic.all
     end
 
-    if params[:order]
-      @topics = @topics.order("#{params[:order]} DESC").page(params[:page]).per(10)
-    else
-      @topics = @topics.order("id DESC").page(params[:page]).per(10)
+    unless current_user && current_user.admin?
+      @topics = @topics.where(state: '發布')  # published
     end
 
-    # #判斷是否為會員＆管理員＄一般人，撈出相對應的資料，再進行排序的動作
-    # if current_user && current_user.role == "admin"
-    #   @topics = Topic.all
-    # elsif current_user
-    #   @topics = Topic.where( ["state = ? OR ( state = ? AND user_id = ?) ", "發布", "草稿", current_user.id ])
-    # else
-    #   @topics = Topic.where( :state => "發布" )
-    # end
-
-    # #排序，先看有沒有類別，在排序，一對多
-    # if params[:category]
-
-    #   if params[:order] == "most_comment"
-    #     @topics = @topics.order("most_comment DESC").where(:category_id => params[:category])
-    #   elsif params[:order] == "last_comment"
-    #     @topics = @topics.order("last_comment DESC").where(:category_id => params[:category])
-    #   elsif params[:order] == "view"
-    #     @topics = @topics.order("view DESC").where(:category_id => params[:category])
-    #   else
-    #     @topics = @topics.order("id DESC").where(:category_id => params[:category])
-    #   end
-
-    # elsif params[:tag]
-
-    #   @tag = Tag.find(params[:tag])
-    #   if params[:order] == "most_comment"
-    #     @topics = @tag.topics.order("most_comment DESC")
-    #   elsif params[:order] == "last_comment"
-    #     @topics = @tag.topics.order("last_comment DESC")
-    #   elsif params[:order] == "view"
-    #     @topics = @tag.topics.order("view DESC")
-    #   else
-    #     @topics = @tag.topics.order("id DESC")
-    #   end
-
-    # else
-
-    #   if params[:order] == "most_comment"
-    #     @topics = @topics.order("most_comment DESC")
-    #   elsif params[:order] == "last_comment"
-    #     @topics = @topics.order("last_comment DESC")
-    #   elsif params[:order] == "view"
-    #     @topics = @topics.order("view DESC")
-    #   else
-    #     @topics = @topics.order("id DESC")
-    #   end
-    # end
-
+    if ["most_comment", "last_comment", "view", "id"].include?( params[:order] )
+      @topics = @topics.order("#{params[:order]} DESC")
+    else
+      @topics = @topics.order("id DESC")
+    end
 
     #找自己話題
     if params[:user]
@@ -216,8 +147,8 @@ class TopicsController < ApplicationController
       @topics = @topics.where( [ "name like ?", "%#{params[:keyword]}%" ] )
     end
 
-      @topics = @topics.page(params[:page]).per(10)
-    end
+    @topics = @topics.page(params[:page]).per(10)
+  end
 
   def new
     @topic = Topic.new
@@ -253,37 +184,16 @@ class TopicsController < ApplicationController
   def show
     @comment = Comment.new
 
-    if cookies["view-topic-#{@topic.id}"]
-      # do nothing
-    else
-      # view+1
+    unless cookies["view-topic-#{@topic.id}"]
       @topic.increment!(:view)
-      Rails.logger.debug("Topic Hit! : #{@topic.id}" )
-      cookies["view-topic-#{@topic.id}"] = "yes!"
+      cookies["view-topic-#{@topic.id}"] = true
     end
 
-    # 收藏
-    @is_collect = "btn-default"
-    @is_collect_name = "未收藏"
-
-    if current_user != nil
-      current_user.collects.each do |c|
-          if c.id == @topic.id
-            @is_collect = "btn-warning"
-            @is_collect_name = "已收藏"
-          end
-      end
-    end
-
-    # 收藏的人名
-    @cc=@topic.collects.map{|cc| cc.user_name}
-    @cc=@cc.join(" ")
-
-    # like
+    # TODO: refactor
     @is_like = "btn-default"
     @is_like_name = "un-like"
 
-    if current_user != nil
+    if current_user
       current_user.likes.each do |l|
           if l.topic_id == @topic.id
             @is_like = "btn-info"
@@ -297,7 +207,7 @@ class TopicsController < ApplicationController
     @ll=@ll.join(" ")
 
 
-    # subscribe
+    # TODO: refactor
     @is_subscribe = "btn-default"
     @is_subscribe_name = "未訂閱"
 
@@ -316,7 +226,6 @@ class TopicsController < ApplicationController
 
   end
 
-
   def destroy
     @topic.destroy
     flash[:notice] = "刪除成功"
@@ -325,20 +234,18 @@ class TopicsController < ApplicationController
 
   private
 
-  def set_show
-    if current_user
-      if current_user.role == "admin"
+  def set_post
+    if current_user && current_user.admin?
       @topic = Topic.find(params[:id])
-      else
+    elsif current_user
       @topic = Topic.where(["state = ? OR ( state = ? AND user_id = ?) ", "發布", "草稿", current_user.id ]).find(params[:id])
-      end
     else
       @topic = Topic.where(state: "發布").find(params[:id])
     end
   end
 
-  def set_post
-    if current_user.role == "admin"
+  def set_my_post
+    if current_user.admin?
       @topic = Topic.find(params[:id])
     else
       @topic = current_user.topics.find(params[:id])

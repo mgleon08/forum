@@ -19,7 +19,7 @@
     <h3 class="panel-title">誰有收藏這篇文章？</h3>
   </div>
   <div class="panel-body" id="cc">
-    <%=@cc%>
+    <%= topic_collect_user_name(@topic) %>
   </div>
 </div>
 
@@ -46,8 +46,8 @@
 <%=link_to "回首頁", root_path(:page=>params[:page]), :class => "btn btn-primary"%>
 
 
-<%=link_to collect_topic_path(@topic,:page=>params[:page]), :class => "btn #{@is_collect} ", remote: true, :id => "col" do%>
-  <span id="col-name"><%=@is_collect_name%></span>
+<%=link_to collect_topic_path(@topic,:page=>params[:page]), :class => "btn #{is_topic_collect_class(@topic)} ", remote: true, :id => "col" do%>
+  <span id="col-name"><%= is_topic_collect_name(@topic) %></span>
   <span class="badge" id="col-number"><%=@topic.topic_user_collects.count%></span>
 <%end%>
 
@@ -80,6 +80,14 @@
 
 <!-- 留言回覆 -->
 <%=render @topic.comments%>
+
+<!-- 留言回覆 -->
+<%# @topic.comments.each do |c|
+  <%#= render :partial => "comments/comment", :locals => { :comment => c } %>
+<%# end %>
+
+<%#= render :partial => "comments/comment", :collection => @topic.comments, :as => :comment %>
+
 </table>
 
 <!-- 文章留言，setup_comment是因為圖片在另一個model -->

@@ -1,10 +1,10 @@
   <div class="row">
     <div class="col-sm-12">
       <div>
-        <%= link_to "關於本站", about_topics_path , :class => "btn btn-primary"%>
-        <%if current_user != nil %>
-        <%= link_to "新增文章", new_topic_path , :class => "btn btn-success"%>
-        <%end%>
+        <%= link_to "關於本站", about_path, :class => "btn btn-primary"%>
+        <% if current_user %>
+        <%= link_to "新增文章", new_topic_path, :class => "btn btn-success"%>
+        <% end %>
       </div>
     </div>
   </div>
@@ -27,8 +27,8 @@
 
     <div class="col-sm-3 right">
       <%= form_tag topics_path, :method => :get do %>
-      <%= text_field_tag "keyword" %>
-      <%= submit_tag "Search", :class => "btn btn-default"%>
+        <%= text_field_tag "keyword" %>
+        <%= submit_tag "Search", :class => "btn btn-default"%>
       <% end %>
     </div>
   </div>
@@ -76,8 +76,8 @@
 
 <table class="table table-striped">
   <tr>
-    <%if current_user != nil %>
-        <%if current_user.role == "admin" %>
+    <%if current_user %>
+        <%if current_user.admin? %>
       <td>
           <%= check_box_tag "all_topics" %>
         <%end%>
@@ -124,20 +124,17 @@
           <%end%>
         </td>
         <!-- 參與討論用戶 -->
-            <%topic_comment_users = t.comments.map{ |c| c.user }%>
-            <%topic_comment_users.uniq!%>
         <td>
-        <%  topic_comment_users.each do |c| %>
-          <%= link_to introduction_path(c), :id => "pic" do%>
-          <%=image_tag(Gravatar.new(c.email).image_url,:size => "15x15")%>
-          <%= c.user_name%>
+        <% t.comment_users.each do |c| %>
+          <%= link_to introduction_path(c), :id => "pic" do %>
+            <%= image_tag( avatar(c), :size => "15x15")%>
+            <%= c.user_name %>
           <%end%>
         <%end%>
         </td>
         <!-- 觀看次數 -->
         <td> <%=t.view%> </td>
         <!-- 最多回覆 -->
-        <%t.most_comment = t.comments.count%>
         <td> <%=t.most_comment%> </td>
         <!-- 最後回覆 -->
         <%t.last_comment = t.comments.last.try(:created_at)%>
@@ -151,47 +148,38 @@
           <%=t.user.try(:user_name)%>
         <%end%>
         </td>
-        <%if current_user != nil %>
+
+        <% if current_user && ( current_user == t.user || current_user.admin? ) %>
           <td>
-          <%if current_user == t.user || current_user.admin?%>
             <%=t.state%>
-          <%end%>
           </td>
           <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
-            <%end%>
+            <%=link_to "編輯", edit_topic_path(t,:page=>params[:page]), :class => "btn btn-success" %>
           </td>
           <td>
-            <%if current_user == t.user || current_user.admin?%>
-              <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
-            <%end%>
+            <%=link_to "刪除", topic_path(t,:page=>params[:page]), :method => :delete, :class => "btn btn-danger" %>
           </td>
-        <%end%>
+        <% end %>
+
       </tr>
   <%end%>
 </table>
-  <%if current_user %>
-    <%if current_user.role == "admin" %>
-      <%= submit_tag "選取刪除" ,:class => "btn btn-danger"%>
-    <% end %>
+  <% if current_user &&  current_user.admin? %>
+    <%= submit_tag "選取刪除" ,:class => "btn btn-danger"%>
   <% end %>
 <% end %>
 
 <%= paginate @topics, :theme => 'twitter-bootstrap-3', :pagination_class => "pagination-sm"%>
 
-
 <script>
-$(document).ready(function() {
-    $("#all_topics").click(function(){
-      if ( $(this).prop("checked")) {
-         console.log("11111")
-        $("input[name='ids[]']").prop("checked",true)
-      } else {
-        console.log("dsdf")
-        $("input[name='ids[]']").prop("checked",false)
-      }
-    });
- });
+$("#all_topics").click(function(){
+  if ( $(this).prop("checked")) {
+     console.log("11111")
+    $("input[name='ids[]']").prop("checked",true)
+  } else {
+    console.log("dsdf")
+    $("input[name='ids[]']").prop("checked",false)
+  }
+});
 </script>
 

@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20151005085042) do
   create_table "comments", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "topic_id"
-    t.text     "user_comment"
+    t.text     "user_comment"  # content
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
@@ -115,15 +115,15 @@ ActiveRecord::Schema.define(version: 20151005085042) do
 
   create_table "topics", force: :cascade do |t|
     t.string   "name"
-    t.text     "article"
+    t.text     "article" # content
     t.string   "state"
     t.integer  "view",         default: 0
     t.integer  "user_id"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.integer  "category_id"
-    t.integer  "most_comment"
-    t.datetime "last_comment"
+    t.integer  "most_comment" # comments_count
+    t.datetime "last_comment" # last_commented_at
   end
 
   add_index "topics", ["category_id"], name: "index_topics_on_category_id"
@@ -140,12 +140,12 @@ ActiveRecord::Schema.define(version: 20151005085042) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.string   "user_name"
+    t.string   "user_name" # username
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "role"
-    t.string   "provider"
-    t.string   "uid"
+    t.string   "provider" # remove this column
+    t.string   "uid" # fb_uid
     t.string   "fb_token"
     t.string   "fb_raw_data"
   end

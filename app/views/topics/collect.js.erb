@@ -1,9 +1,7 @@
-$(document).ready(function() {
-  $("#col").toggleClass("<%=@is_collect%>")
-  $("#col").toggleClass("<%=@is_collect2%>")
-  $("#col-name").text("<%=@is_collect_name%>");
-  $("#col-number").text(<%=@topic.topic_user_collects.count%>);
-  $("#cc").text("<%=@cc%>");
-});
+$("#col").toggleClass("btn-default")
+$("#col").toggleClass("btn-warning")
 
+$("#col-name").text("<%= is_topic_collect_name(@topic) %>");
+$("#cc").text("<%= topic_collect_user_name(@topic) %>");
 
+$("#col-number").text(<%=@topic.topic_user_collects.count%>);

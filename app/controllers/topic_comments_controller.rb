@@ -1,6 +1,7 @@
 class TopicCommentsController < ApplicationController
 
-  before_action :topic_find
+  before_action :authenticate_user!, :except => [:index]
+  before_action :find_topic
 
   def index
   end
@@ -8,22 +9,11 @@ class TopicCommentsController < ApplicationController
   def create
     @comment = @topic.comments.new(comment_params)
     @comment.user = current_user
+    @comment.save
 
     respond_to do |format|
-      if @comment.save
-
-        format.html {
-          redirect_to topic_path(@topic)
-          flash[:notice] = "留言成功"
-        }
-        format.js
-      else
-        format.html {
-          redirect_to topic_path(@topic)
-          flash[:alert] = "留言失敗(不能留空白)"
-        }
-        format.js
-      end
+      format.html { redirect_to topic_path(@topic) }
+      format.js
     end
   end
 
@@ -47,16 +37,14 @@ class TopicCommentsController < ApplicationController
     @comment.destroy
 
     respond_to do |format|
-     format.html {
-       redirect_to topic_path(@topic)
-     }
-    format.js
+     format.html { redirect_to topic_path(@topic)}
+     format.js
     end
   end
 
   private
 
-  def topic_find
+  def find_topic
     @topic = Topic.find(params[:topic_id])
   end
 

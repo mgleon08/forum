@@ -20,7 +20,7 @@
     <td>最後回覆時間</td>
     <td>最後回覆用戶</td>
     <td>發帖人</td>
-    <%if current_user != nil %>
+    <%if current_user %>
       <td>狀態</td>
       <td>編輯</td>
       <td>刪除</td>
@@ -39,17 +39,14 @@
         <%end%>
       </td>
       <!-- 參與討論用戶 -->
-          <%topic_comment_users = t.comments.map{ |c| c.user }%>
-          <%topic_comment_users.uniq!%>
       <td>
-      <%  topic_comment_users.each do |c| %>
-      <%= link_to c.user_name, introduction_path(c) %>
+      <% t.comment_users.each do |c| %>
+        <%= link_to c.user_name, introduction_path(c) %>
       <%end%>
       </td>
       <!-- 觀看次數 -->
       <td> <%=t.view%> </td>
       <!-- 最多回覆 -->
-      <%t.most_comment = t.comments.count%>
       <td> <%=t.most_comment%> </td>
       <!-- 最後回覆 -->
       <%t.last_comment = t.comments.last.try(:created_at)%>
@@ -136,7 +133,7 @@
     <%end%>
   </tr>
 
-  <%@user.collects.each do |t|%>
+  <%@user.collect_topics.each do |t|%>
   <tr>
       <!-- 主題名稱 -->
       <td><%=link_to t.name, topic_path(t,:page=>params[:page])%></td>

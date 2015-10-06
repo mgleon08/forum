@@ -1,3 +1,4 @@
+# TODO: remove this, just use Picture
 class Mpicture < ActiveRecord::Base
   belongs_to :topic
   has_attached_file :upload, styles: { medium: '300x300>', thumb: '100x100>' },

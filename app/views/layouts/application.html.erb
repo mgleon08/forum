@@ -27,7 +27,7 @@
     |
     <%= link_to('修改密碼', edit_registration_path(:user)) %>
     |
-    <%= link_to('個人簡介', introduction_path(current_user)) %>
+    <%= link_to('個人簡介', me_path) %>
     <%if current_user.admin?%>
     |
     <%=link_to "管理者介面", admin_topics_path%>
