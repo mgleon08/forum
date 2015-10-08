@@ -3,11 +3,11 @@ class Admin::UsersController < ApplicationController
   before_action :check_admin
 
   def edit
-    @user = User.find(params[:id])
+    @user = User.find_by_user_name(params[:id])
   end
 
   def update
-    @user = User.find(params[:id])
+    @user = User.find_by_user_name(params[:id])
     if @user.update(user_params)
       flash[:notice] = "編輯成功"
       redirect_to admin_topics_path

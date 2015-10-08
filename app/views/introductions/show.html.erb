@@ -1,9 +1,13 @@
 <h1><%=@user.user_name%>的個人簡介</h1>
 <h3> <%=@user.introduction.try(:pro)%> </h3>
-<%= link_to "Add Friend", friendships_path(:friend_id => @user.id), :method => :post, :class => "btn btn-primary"%>
-<br>
+
+<%if current_user != @user && current_user.my_friends?(@user)%>
+  <%= link_to "Add Friend", friendships_path(:friend_id => @user.id), :method => :post, :class => "btn #{my_friends_class?(@user)}"%>
+  <br>
+<%end%>
 
 <!-- friend -->
+<%if current_user == @user%>
 <h2>All User</h2>
 <% @users.each do |user| %>
   <div class="user">
@@ -15,31 +19,118 @@
   </div>
 <% end %>
 
-<h2>Your Friends List</h2>
-<ul>
-  <% @user.friends.each do |user| %>
-  <li><%= user.try(:user_name) %></li>
-  <% end %>
-</ul>
-
 <h2>Your Friends Remove</h2>
 <ul>
   <%@user.friendships.each do |friendship|  %>
-  <li>
-    <%=  friendship.friend.try(:user_name) %>
+
+    <%if friendship.status == "好友" %>
+    <li>
+    <%= friendship.friend.try(:user_name) %>
     <%= link_to "remove", friendship_path(friendship.id), :method => :delete %>
-  </li>
+    </li>
+    <%end%>
   <% end %>
 </ul>
 
-<h2>Users Who Have Befriended You</h2>
-<ul>
-  <% @user.inverse_friends.each do |user|  %>
-  <li><%=  user.user_name %></li>
-  <% end %>
-</ul>
+<br>
+<br>
+
+
+<div class="row">
+
+
+  <div class="col-sm-2">
+     <table class="table table-striped">
+     <tr class = "info">
+        <td>已提出邀請</td>
+      </tr>
+     <tr>
+        <td>
+          <% @user.friendships.each do |user|  %>
+            <% if user.try(:status)=="邀請"%>
+              <li><%=  user.friend.user_name %></li>
+            <%end %>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="col-sm-3">
+
+    <table class="table table-striped">
+      <tr class="warning">
+        <td colspan="3">對方提出邀請</td>
+      </tr>
+
+      <tr>
+        <% @user.inverse_friendships.each do |user|  %>
+        <%if user.try(:status)=="邀請"%>
+          <td> <%= user.user.user_name %></td>
+          <td> <%= link_to "接受", friendships_path(:friend_id => user.user.id,:select=>"yes"), :method => :post, :class => "btn #{my_friends_class?(user)}"%></td>
+          <td> <%= link_to "拒絕", friendships_path(:friend_id => user.user.id,:select=>"no"), :method => :post, :class => "btn #{my_friends_class?(user)}"%></td>
+          <%end %>
+        <% end %>
+      </tr>
+    </table>
+  </div>
+
+  <div class="col-sm-2">
+     <table class="table table-striped">
+     <tr class = "info">
+        <td>成功加好友</td>
+      </tr>
+     <tr>
+        <td>
+          <% @user.inverse_friendships.each do |user|  %>
+            <% if user.try(:status)=="好友"%>
+              <li><%=  user.user.user_name %></li>
+            <%end %>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="col-sm-3">
+     <table class="table table-striped">
+     <tr class="danger">
+        <td>拒絕加好友</td>
+      </tr>
+     <tr>
+        <td>
+          <% @user.inverse_friendships.each do |user|  %>
+              <%if user.try(:status)=="拒絕"%>
+                <li><%=  user.user.user_name %></li>
+              <% end %>
+            <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="col-sm-2">
+     <table class="table table-striped">
+     <tr class="danger">
+        <td>被拒絕加好友</td>
+      </tr>
+     <tr>
+        <td>
+          <% @user.friendships.each do |user|  %>
+              <%if user.try(:status)=="拒絕"%>
+                <li><%=  user.friend.user_name %></li>
+              <% end %>
+            <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+
+</div>
+
 <!-- friend -->
-
+<%end%>
 <br>
 <br>
 <%if current_user != nil%>

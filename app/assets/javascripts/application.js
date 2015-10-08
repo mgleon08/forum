@@ -15,5 +15,7 @@
 //= require turbolinks
 //= require bootstrap-sprockets
 //= require nested_form_fields
-//= require_tree.
+//= require bootstrap-datepicker
+//= require select2
+
 Turbolinks.enableProgressBar();

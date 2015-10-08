@@ -50,6 +50,10 @@
   <%= t.datetime_select :scheduled, :class => "form-control"%>
 </div>
 
+<div class="form-group">
+  <%= t.label :competence, "權限"%>
+  <%=  t.select :competence, [["只有自己可以看","1"],["別人只能看不能留言","2"],["別人可以看也能留言","3"],["限好友才能看跟留言","4"]],  :class => "form-control"%>
+</div>
 
 
 <!-- 一對一，存取在不同的model -->
@@ -77,3 +81,20 @@
 <% end %>
 <%=t.add_nested_fields_link :mpictures, '增加照片'%>
 <br>
+
+<script>
+
+  $('.datepicker').datepicker({
+       format: "yyyy/mm/dd"
+  });
+
+  $("#topic_category_id").select2();
+
+
+  $("#topic_tag_list").select2({
+    tags: <%=raw Tag.all.map{|t| t.name}%>,
+    tokenSeparators: [',', ' ']
+  });
+
+
+</script>

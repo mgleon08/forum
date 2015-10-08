@@ -67,6 +67,7 @@
 
 <br/>
 <br/>
+
 <table class="table table-striped" id="user_message">
 <tr>
   <td>編號</td>
@@ -94,7 +95,7 @@
 </table>
 
 <!-- 文章留言，setup_comment是因為圖片在另一個model -->
-<%if current_user != nil %>
+<%if current_user != nil && @topic.user.my_friends?(current_user)%>
   <%=form_for setup_comment(@comment), :url => topic_comments_path(@topic), remote: true do |t|%>
     <h2><%= t.label :user_comment, "留言:"%></h2>
     <%= t.text_area :user_comment, :class => "form-control post_content"%>
@@ -115,7 +116,7 @@
     <%= t.submit "送出", :class => "btn btn-success"%>
   <%end%>
 <%else%>
-  <%= link_to('留言請先登入', new_session_path(:user)) %>
+  <%= link_to('留言請先登入,或是你不是他朋友', new_session_path(:user)) %>
 <%end%>
 
 <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count"></div>

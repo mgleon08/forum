@@ -21,6 +21,8 @@ gem 'devise'
 gem 'omniauth-facebook'
 gem "paperclip"
 gem 'nested_form_fields'
+gem 'bootstrap-datepicker-rails'
+gem "select2-rails", "~> 3.5"
 
 gem 'gravatar-ultimate'
 # Use jquery as the JavaScript library

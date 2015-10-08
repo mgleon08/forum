@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151007141529) do
+ActiveRecord::Schema.define(version: 20151008090240) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -133,6 +133,7 @@ ActiveRecord::Schema.define(version: 20151007141529) do
     t.integer  "most_comment"
     t.datetime "last_comment"
     t.datetime "scheduled"
+    t.string   "competence"
   end
 
   add_index "topics", ["category_id"], name: "index_topics_on_category_id"

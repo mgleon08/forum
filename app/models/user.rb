@@ -37,14 +37,8 @@ class User < ActiveRecord::Base
     self.role == "admin"
   end
 
-  def my_friends?(friendid)
-    a = true
-    self.friends.each do |f|
-      if f.id == friendid
-          a = false
-      end
-    end
-    a
+  def my_friends?(friend)
+    self.friends.include?(friend)
   end
 
   def is_collect?(topic)
