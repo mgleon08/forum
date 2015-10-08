@@ -7,13 +7,13 @@ class Topic < ActiveRecord::Base
 
   has_many :comments, dependent: :destroy
 
-  has_many :topic_user_collects
+  has_many :topic_user_collects, dependent: :destroy
   has_many :collect_users, :through => :topic_user_collects, :source => :user
 
-  has_many :likes
+  has_many :likes, dependent: :destroy
   has_many :like_users , :through => :likes, :source => :user # TODO: rename to like_topics
 
-  has_many :subscribes
+  has_many :subscribes, dependent: :destroy
   has_many :subscribe_users , :through => :subscribes, :source => :user
 
   has_one :picture, dependent: :destroy
@@ -28,7 +28,7 @@ class Topic < ActiveRecord::Base
 
 
   def comment_users
-    comments.map{ |c| c.user }.uniq
+    self.comments.map{ |c| c.user }.uniq
   end
 
   def tag_list
@@ -48,5 +48,6 @@ class Topic < ActiveRecord::Base
 
   end
 
-
 end
+
+

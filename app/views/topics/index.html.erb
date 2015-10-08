@@ -1,3 +1,5 @@
+
+
   <div class="row">
     <div class="col-sm-12">
       <div>
@@ -138,6 +140,7 @@
         <td> <%=t.most_comment%> </td>
         <!-- 最後回覆 -->
         <%t.last_comment = t.comments.last.try(:created_at)%>
+        <%t.save%>
         <td> <%=t.last_comment.try(:strftime, "%Y-%m-%d %T") %> </td>
         <!-- 最後回覆用戶 -->
         <td> <%=t.comments.last.try(:user).try(:user_name) %> </td>

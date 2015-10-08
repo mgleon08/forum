@@ -6,6 +6,8 @@ class IntroductionsController < ApplicationController
     else
       @user = current_user
     end
+
+    @users = User.all
   end
 
   def edit

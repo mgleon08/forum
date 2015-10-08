@@ -64,7 +64,6 @@ class TopicsController < ApplicationController
       format.html {redirect_to :back}
       format.js
     end
-
   end
 
 
@@ -82,8 +81,12 @@ class TopicsController < ApplicationController
       @topics = Topic.all
     end
 
-    unless current_user && current_user.admin?
-      @topics = @topics.where(state: '發布')  # published
+    if current_user && current_user.admin?
+      @topics = @topics.all
+    elsif current_user
+      @topics = @topics.where(["state = ? OR ( state = ? AND user_id = ?) ", "發布", "草稿", current_user.id ])
+    else
+      @topics = @topics.where(state: "發布").where("scheduled<(?)",Time.now)
     end
 
     if ["most_comment", "last_comment", "view", "id"].include?( params[:order] )
@@ -102,7 +105,7 @@ class TopicsController < ApplicationController
       @topics = @topics.where( [ "name like ?", "%#{params[:keyword]}%" ] )
     end
 
-    @topics = @topics.page(params[:page]).per(10)
+    @topics = @topics.includes(:user, :category, :tags, :comments => :user ).page(params[:page]).per(10)
   end
 
   def new
@@ -174,6 +177,6 @@ class TopicsController < ApplicationController
   end
 
   def topic_params
-    params.require(:topic).permit(:id,:name,:article,:category_id,:state,:tag_list,:tag_ids=>[], :mpictures_attributes => [:id, :title, :upload, :_destroy],:picture_attributes => [:id, :title, :upload, :_destroy] )
+    params.require(:topic).permit(:id,:name,:article,:category_id,:scheduled,:state,:tag_list,:tag_ids=>[], :mpictures_attributes => [:id, :title, :upload, :_destroy],:picture_attributes => [:id, :title, :upload, :_destroy] )
   end
 end

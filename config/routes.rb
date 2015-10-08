@@ -4,6 +4,8 @@ Rails.application.routes.draw do
     get "/about" => "topics#about"
     get "/me" => "introductions#show"
 
+    resources :friendships
+
     resources :introductions # better naming: profiles
 
     resources :topics do

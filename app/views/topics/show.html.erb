@@ -1,4 +1,7 @@
-<h1><%=@topic.name%>  <span class="fb-like"></span></h1>
+<h1><%=@topic.name%>  <span class="fb-like"></span>
+<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count"></div>
+</h1>
+
   <p><%=@topic.article%></p>
     <%if @topic.picture.present? %>
   <div>
@@ -114,3 +117,14 @@
 <%else%>
   <%= link_to('留言請先登入', new_session_path(:user)) %>
 <%end%>
+
+<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count"></div>
+
+<%= content_for :head do %>
+    <%= tag(:meta, :content => @topic.name, :property => "og:title") %>
+    <%= tag(:meta, :content => @topic.article, :property => "og:type") %>
+    <% if @topic.picture %>
+      <%= tag(:meta, :content => @topic.picture.upload.url, :property => "og:image") %>
+    <% end %>
+    <%= tag(:meta, :content => topic_url(@topic), :property => "og:url") %>
+<% end %>

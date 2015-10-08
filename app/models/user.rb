@@ -8,18 +8,26 @@ class User < ActiveRecord::Base
   has_many :comments, dependent: :destroy
   has_many :topics, dependent: :destroy
 
-  has_many :topic_user_collects
+  has_many :topic_user_collects, dependent: :destroy
   has_many :collect_topics, :through => :topic_user_collects, :source => :topic
 
 
-  has_many :likes
+  has_many :likes, dependent: :destroy
   has_many :like_topics , :through => :likes, :source => :topic # TODO: rename to like_topics
 
 
-  has_many :subscribes
+  has_many :subscribes, dependent: :destroy
   has_many :subscribe_topics , :through => :subscribes, :source => :topic
 
   has_one :introduction
+
+
+  has_many :friendships, dependent: :destroy
+  has_many :friends, :through => :friendships
+
+  has_many :inverse_friendships, :class_name => "Friendship", :foreign_key => "friend_id"
+  has_many :inverse_friends, :through => :inverse_friendships, :source => :user
+
 
   def to_param
     "#{user_name}"
@@ -27,6 +35,16 @@ class User < ActiveRecord::Base
 
   def admin?
     self.role == "admin"
+  end
+
+  def my_friends?(friendid)
+    a = true
+    self.friends.each do |f|
+      if f.id == friendid
+          a = false
+      end
+    end
+    a
   end
 
   def is_collect?(topic)

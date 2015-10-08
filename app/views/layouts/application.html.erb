@@ -5,7 +5,7 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
-
+  <%= yield :head %>
 </head>
 <body>
 <div id="fb-root"></div>
@@ -16,6 +16,7 @@
   js.src = "//connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v2.4&appId=300222283470187";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
+
 
 <div class="container">
   <% if current_user %>

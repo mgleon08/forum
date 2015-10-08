@@ -1,6 +1,45 @@
 <h1><%=@user.user_name%>的個人簡介</h1>
 <h3> <%=@user.introduction.try(:pro)%> </h3>
+<%= link_to "Add Friend", friendships_path(:friend_id => @user.id), :method => :post, :class => "btn btn-primary"%>
 <br>
+
+<!-- friend -->
+<h2>All User</h2>
+<% @users.each do |user| %>
+  <div class="user">
+    <p>
+      <strong><%= user.user_name %></strong>
+      <%= link_to "Add Friend", friendships_path(:friend_id => user.id), :method => :post %>
+      <div class="clear"></div>
+    </p>
+  </div>
+<% end %>
+
+<h2>Your Friends List</h2>
+<ul>
+  <% @user.friends.each do |user| %>
+  <li><%= user.try(:user_name) %></li>
+  <% end %>
+</ul>
+
+<h2>Your Friends Remove</h2>
+<ul>
+  <%@user.friendships.each do |friendship|  %>
+  <li>
+    <%=  friendship.friend.try(:user_name) %>
+    <%= link_to "remove", friendship_path(friendship.id), :method => :delete %>
+  </li>
+  <% end %>
+</ul>
+
+<h2>Users Who Have Befriended You</h2>
+<ul>
+  <% @user.inverse_friends.each do |user|  %>
+  <li><%=  user.user_name %></li>
+  <% end %>
+</ul>
+<!-- friend -->
+
 <br>
 <br>
 <%if current_user != nil%>
