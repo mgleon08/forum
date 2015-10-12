@@ -17,7 +17,6 @@ class TopicsController < ApplicationController
      topics.each{ |t| t.destroy }
     end
     redirect_to root_path
-    byebug
   end
 
   def collect
@@ -118,6 +117,11 @@ class TopicsController < ApplicationController
 
     if @topic.save
       flash[:notice] = "新增成功"
+      if params[:upload]
+        params[:upload].each { |image|
+          @topic.mmpictures.create(upload: image)
+        }
+    end
       redirect_to topics_path
     else
       flash.now[:alert] = "新增失敗"
@@ -148,6 +152,8 @@ class TopicsController < ApplicationController
       cookies["view-topic-#{@topic.id}"] = true
     end
 
+    session[:topic_id] = @topic.id
+
   end
 
   def destroy
@@ -177,6 +183,6 @@ class TopicsController < ApplicationController
   end
 
   def topic_params
-    params.require(:topic).permit(:competence,:id,:name,:article,:category_id,:scheduled,:state,:tag_list,:tag_ids=>[], :mpictures_attributes => [:id, :title, :upload, :_destroy],:picture_attributes => [:id, :title, :upload, :_destroy] )
+    params.require(:topic).permit({galleries: []}, :image,:competence,:id,:name,:article,:category_id,:scheduled,:state,:tag_list,:tag_ids=>[], :mpictures_attributes => [:id, :title, :upload, :_destroy],:picture_attributes => [:id, :title, :upload, :_destroy] )
   end
 end

@@ -82,11 +82,18 @@
 <%=t.add_nested_fields_link :mpictures, '增加照片'%>
 <br>
 
-<script>
+多張一次上傳檔案
+<%= t.label :mmpictures, :class => 'control-label' %>
+<%= file_field_tag "upload[]", type: :file, multiple: true %>
 
-  $('.datepicker').datepicker({
-       format: "yyyy/mm/dd"
-  });
+-------------------
+  <%= file_field_tag "upload[]", type: :file, multiple: true %>
+
+--------carrierwave-----------
+ <%= t.file_field :image %>
+
+
+<script>
 
   $("#topic_category_id").select2();
 
